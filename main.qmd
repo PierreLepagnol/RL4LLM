@@ -62,22 +62,32 @@ Cette approche offre plusieurs avantages, notamment une meilleure gestion des en
 
 # Application du RL au LLMs
 
-##
+Le RL est utilisé à 2 moments de l'apprentissage d'un LLM :
 
-- TRPO, PPO, GRPO
-
- Trust Region Policy Optimization
-- Trust Region Policy Optimization
-
-GRPO (Group Relative Policy Optimization) is a method used in reinforcement learning (RL) to help a model learn better by comparing different actions and making small, controlled updates using a group of observations
+- Pre-training: Phase nécéssitant le plus de compute et de données.
+- Post-Training (RL-HF/AI): Phase d'alignement pour assurer
 
 ## Exemple de Deepseek-R1
 
 ![TrainingPipeline de DeepSeek R1](figures/DeepSeek_TrainingPipeline_RL.jpeg){height="80%"}
 
+## Différents Algo
+
+- TRPO: Trust Region Policy Optimization
+- PPO: Proximal Policy Optimization
+- GRPO: Group Relative Policy Optimization
+
+
+GRPO (Group Relative Policy Optimization) is a method used in reinforcement learning (RL) to help a model learn better by comparing different actions and making small, controlled updates using a group of observations
+
+
 ## RL during Post-Training
 
-Alternative au RL (DPO)
+
+![Pipeline Instruct GPT: RLHF](figures/InstructGPTRLHF.jpg)
+
+
+Alternative au RL: (DPO)
 
 ## RL during Pre-Training
 

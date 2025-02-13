@@ -39,6 +39,21 @@ Ce défi est similaire à la façon dont **les animaux et les humains apprennent
 ### **Concepts clés de l'apprentissage par renforcement**
 
 
+Deux composantes essentielles du RL sont :
+
+1. **Politique (π) :**
+  - Une **stratégie ou un ensemble de règles** que l'agent suit pour décider quelle action entreprendre dans un état donné.
+  - Peut être **déterministe** (choisit toujours la meilleure action) ou **probabiliste** (choisit les actions en fonction des probabilités).
+  - Écrite sous la forme **π(a|s)**, ce qui signifie la probabilité de prendre l'action **a** dans l'état **s**.
+
+2. **Fonction de valeur (V) :**
+  - Mesure à quel point il est **bon** d'être dans un état particulier.
+  - C'est la **somme attendue des récompenses futures**, souvent avec un **facteur d'escompte** qui donne plus de poids aux récompenses immédiates.
+
+Pour les petits problèmes comme le **tic-tac-toe,** nous pouvons calculer les fonctions de valeur par force brute en considérant tous les états de jeu possibles. Mais pour les **jeux complexes comme les échecs ou le Go,** le nombre d'états possibles est astronomiquement grand (peut-être **10⁸⁰ ou plus !**). Pour cette raison, nous avons besoin de **moyens plus intelligents pour estimer les fonctions de valeur et les politiques.**
+
+L'objectif du RL est d'**apprendre la politique optimale** qui maximise les récompenses futures par **essais et erreurs**. C'est un problème difficile, c'est pourquoi le RL évolue depuis près d'un siècle et continue de croître, en particulier avec l'essor de l'apprentissage profond.
+
 ---
 
 ## **Organisation des méthodes d'apprentissage par renforcement**

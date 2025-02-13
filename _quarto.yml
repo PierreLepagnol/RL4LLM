@@ -22,6 +22,7 @@ filters:
 format:
     beamer:
       # default-image-extension: tex
+      slide-level: 2
       allowframebreaks: true
       # include-in-header:
         # - macros.tex
