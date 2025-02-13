@@ -11,16 +11,20 @@ date: today
 toc: true
 toc-title	: Sommaire
 fig-cap-location: bottom
-callout-appearance: simple
+callout-appearance: default
 callout-icon: false
 fontsize: "10pt"
+fig-align: center
+pdf-engine: latexmk
 # include-in-header:
   # - vocabulary.tex
-
 filters:
   - citetools
 format:
     beamer:
+      classoption:
+        - '`xcolor={dvipsnames}`{=latex}'
+      theme: moloch
       # default-image-extension: tex
       slide-level: 2
       allowframebreaks: true

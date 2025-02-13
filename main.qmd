@@ -1,31 +1,55 @@
 ---
-title: "LLM Training & Reinforcement Learning. "
+title: "Entrainement de LLM & Reinforcement Learning."
 # author: "Your Name"
 date: "2025-02-14"
 ---
+
+# Un peu de contexte
+
+## InstructGPT - ChatGPT
+
+![](figures/InstructGPT.png){wdith=35%}
+
+- Papier de recherche : 4 Mars 2022
+- ChatGPT : 30 Novembre 2022
+
+## Reasoning Models : DeepSeek-R1 / OpenAI-o1/o3
+
+![](figures/deepseek.svg){fig-align="center"}
+![Nombre de téléchargement de DS-R1](figures/Deepsekdownload.png){fig-align="center"}
+
+## Alternative OpenSource DeepScaleR
+
+DeepScaleR: Surpassing O1-Preview with a 1.5B Model by Scaling RL
+
+![](figures/DeepScalerPerf.png){width=80% fig-align="center"}
+
+<!-- ![](figures/DeepScaler_Perf.png) -->
+<!-- ![](figures/DeepScalerPerf.png){width="90%"} -->
 
 # Qu'est-ce le Reinforcement Learning ?
 
 ## Définitions & Basics
 
-![](figures/RL_process.png)
+Un **\color{ForestGreen}{agent}** qui interagit avec un **\color{ForestGreen}{environnement}** en prenant des **\color{ForestGreen}{actions}** de manière à maximiser une **\color{ForestGreen}{fonction de valeur}** (sommes de récompenses).
 
-Un **agent** qui interagit avec l'**environnement** en prenant des **actions** de manière à maximiser la fonction de **valeur** (sommes des récompenses).
+![](figures/RL_process.png){width=80% fig-align="center"}
 
-L'objectif du RL: apprendre la **politique optimale** qui maximise les récompenses futures par **essais et erreurs**.
+
+::: {.callout-tip title="Objectif du RL"}
+Apprendre la **\color{ForestGreen}{politique} optimale** qui maximise les récompenses futures par **essais/erreurs**.
+:::
 
 <!-- C'est un problème difficile, c'est pourquoi le RL évolue depuis près d'un siècle et continue de croître, en particulier avec l'essor de l'apprentissage profond. -->
 
 ## Composants essentiels du RL: Actions
 
-![](figures/RL_process.png)
+![](figures/RL_process.png){width=70% fig-align="center"}
 
 - **Discrètes** : Exemple - LLM, où chaque token est une action est une action spécifique.
 - **Continues** : Exemple - contrôler un robot, où bouger le bras méchanique est une action continue.
 
 ## Politique ($\pi$) & Fonction de valeur ($V$)
-
-
 ### Politique
 
 - **Stratégie** (ensemble de règles) que l'agent suit pour décider quelle action entreprendre dans un état donné:
@@ -34,13 +58,16 @@ L'objectif du RL: apprendre la **politique optimale** qui maximise les récompen
 <!-- (choisit toujours la meilleure action)  (choisit les actions en fonction des probabilités). -->
 - Formalisme : $\pi(a|s)$, ce qui signifie la probabilité de prendre l'action **a** dans l'état **s**.
 
-
 ### Fonction de valeur ($V$)
 
 - Souvent la somme des **Somme des récompenses futures**
 - Mesure à quel point il est **bon** d'être dans un état particulier.
 
-Rappel Objectif: apprendre la **politique optimale** qui maximise les récompenses futures par **essais et erreurs**.
+
+::: {.callout-note title="Rappel - Objectif du RL"}
+Apprendre la **\color{ForestGreen}{politique} optimale** qui maximise les récompenses futures par **essais/erreurs**.
+:::
+
 
 <!-- À chaque étape, l'agent **observe l'état actuel** de l'environnement (prompt) et utilise cette information pour décider de sa prochaine action.
 Le but de l'agent: **maximiser une récompense**. -->
@@ -64,35 +91,154 @@ Cette approche offre plusieurs avantages, notamment une meilleure gestion des en
 
 Le RL est utilisé à 2 moments de l'apprentissage d'un LLM :
 
-- Pre-training: Phase nécéssitant le plus de compute et de données.
-- Post-Training (RL-HF/AI): Phase d'alignement pour assurer
+### Exemple de Deepseek-R1
 
-## Exemple de Deepseek-R1
+:::: {.columns .smaller}
 
-![TrainingPipeline de DeepSeek R1](figures/DeepSeek_TrainingPipeline_RL.jpeg){height="80%"}
+::: {.column width="60%"}
 
-## Différents Algo
+
+![TrainingPipeline de DeepSeek R1](figures/DeepSeek_TrainingPipeline_RL.jpeg){height="70%"}
+
+:::
+::: {.column width="40%"}
+
+1. *Post-Training* (RL-HF/AI)
+     Phase d'alignement pour assurer
+    **Resoning + Preference RL**
+2. *Pre-training*:
+    Phase Compute & Data Intensive.
+    **Resoning Oriented RL**
+
+
+### Différents Algo
 
 - TRPO: Trust Region Policy Optimization
-- PPO: Proximal Policy Optimization
-- GRPO: Group Relative Policy Optimization
+- **PPO**: Proximal Policy Optimization
+- **GRPO**: Group Relative Policy Optimization
+:::
+::::
 
 
-GRPO (Group Relative Policy Optimization) is a method used in reinforcement learning (RL) to help a model learn better by comparing different actions and making small, controlled updates using a group of observations
+# RL Post-Training: Alignement
 
+::: {.callout-note title="Aligner le modèle"}
+
+- Biaser le modèle pour lui faire adopter un comportement *préférable*.
+- Etre *HH*: Helpful et Harmless.
+- Besoin de récolter des jeux de données de préférence.
+
+![](figures/PrefData.png){height="10%" fig-align="center"}
+
+:::
+
+::: {.callout-important title="Historique"}
+
+- [*Deep reinforcement learning from human preferences*, 2017](https://arxiv.org/abs/1706.03741v1)
+- [*Fine-Tuning Language Models from Human Preferences*, 2020](https://arxiv.org/pdf/1909.08593)
+
+:::
 
 ## RL during Post-Training
 
+\begin{align*}
+   \mathcal{J}_{PPO}(\theta)  & = \mathbb{E}{[q \sim P(Q), o \sim \pi_{\theta_{old}}(O|q)]}\\
+        & \frac{1}{|o|} \sum_{t=1}^{|o|} \min \biggl[ \frac{\pi_\theta(o_{t} | q, o_{<t})}{\pi_{\theta_{old}}(o_{t} | q, o_{<t})} A_{t}, \text{clip} \biggl( \frac{\pi_\theta(o_{t} | q, o_{<t})}{\pi_{\theta_{old}}(o_{t} | q, o_{<t})}, 1 - \epsilon, 1 + \epsilon \biggr)  A_{t} \biggr]
+\end{align*}
 
-![Pipeline Instruct GPT: RLHF](figures/InstructGPTRLHF.jpg)
+
+![Pipeline Instruct-GPT: RLHF](figures/InstructGPTRLHF.jpg){height="50%"}
 
 
-Alternative au RL: (DPO)
+## PPO - Proximal Policy Optimization {.center .fragile}
 
-## RL during Pre-Training
+::: {.callout-note title="Key Takeaways"}
+- Objectif : Éviter les mises à jour trop grandes qui pourraient dégrader les performances.
 
-- GRPO is an improved version of Proximal Policy Optimization (PPO).
+- Modèle Acteur-Critique:
+    - **Acteur**: modèle qui génère les actions (Policy Model - LLM)
+    - **Critique**: évalue la qualité des actions - estime la valeur des récompenses futures (Value Model)[^1]
+:::
+
+![Diagramme de PPO](figures/PPO.jpg){width="90%"}
+
+
+[^1]: Generalized Advantage Estimation (GAE)
+
+## DPO : Direct Preference Optimization
+
+::: {.callout-note title="Key Takeways"}
+- Approche alternative au RLHF
+- Pas de Reward Model ni de Value Model
+- Plus simple à implémenter
+- Résultats similaires en performance
+:::
+<!-- ![](figures/DPO.png){height="55%"} -->
+
+![[Illustration de DPO](https://arxiv.org/pdf/2305.18290)](figures/DPOTeaser.png){width="90%"}
+
+<!--
+where $\pi_{\theta}$ and $\pi_{\theta_{old}}$ are the current and old policy models, and $q, o$  are questions and outputs sampled from the question dataset and the old policy  $\pi_{\theta_{old}}$, respectively.  $\epsilon$ is a clipping-related hyper-parameter introduced in PPO for stabilizing training.  $A_t$  is the advantage, which is computed by applying Generalized Advantage Estimation (GAE) \citep{gae}, based on the rewards  $\{r_{\ge t}\}$  and a learned value function  $V_{\psi}$. Thus, in PPO, a value function needs to be trained alongside the policy model and to mitigate over-optimization of the reward model, the standard approach is to add a per-token KL penalty from a reference model in the reward at each token \citep{ouyang2022training}, i.e.,
+\begin{equation}
+    r_{t} = r_\phi(q, o_{\le t}) - \beta \log\frac{\pi_{\theta}(o_{t}|q, o_{<t})}{\pi_{ref}(o_{t}|q, o_{<t})},
+\label{eq:PPO-reward}
+\end{equation} -->
+
+<!-- @eq:GRPO-obj -->
+
+<!-- Dans le contexte du RLHF, la fonction de valeur est essentiellement le "critique" qui estime à quel point il est bon d'être dans un état donné (ou, plus généralement, à quel point une réponse partielle ou une séquence de tokens est prometteuse) en prédisant la récompense cumulative attendue — où la récompense provient d'un signal de feedback dérivé des humains.
+
+Lors du fine-tuning d'un modèle de langage avec RLHF (souvent en utilisant des algorithmes comme PPO), la fonction de valeur est apprise en même temps que la politique. Elle fournit une estimation de base des récompenses futures, qui est utilisée pour calculer l'avantage (c'est-à-dire la différence entre la récompense réelle et la valeur prédite). Cela aide à stabiliser et à guider les mises à jour de la politique en réduisant la variance dans les estimations du gradient.
+
+En résumé, la fonction de valeur dans RLHF aide le modèle à évaluer la qualité de ses sorties intermédiaires en fonction du feedback humain futur attendu, garantissant que les mises à jour conduisent le modèle vers des comportements qui s'alignent mieux avec les préférences humaines. -->
+
+
+# RL Pre-Training :
+
+::: {.callout-note title="Découvrir les Chain of Thoughts"}
+- Laisser le modèle découvrir la meilleure façon de raisonner
+- Se passer de grande quantités de données pour le SFT
+- Question sous-jacente: Peut-on simplement récompenser le modèle pour sa précision et le laisser découvrir par lui-même la meilleure façon de penser ?
+:::
+
+## DeepseekMath & R1: Utilisation de GRPO
+
+::: {.callout-note title="Key Takeways"}
+- Approche RL alternative à PPO
+- Pas de Reward Model:
+    - Récompenses de précision : Vérification si la réponse finale du modèle est correcte (pour les maths, le code, la logique)
+    - Récompenses de format : Encouragement d'une chaîne de pensée structurée, par ex. avec des balises `<think> ... </think>`
+- Pas de Value Model $=$ gain de mémoire.
+:::
+
+![](figures/DeepSeekMAth.png){width="80%" fig-align="center"}
+
+<!-- \begin{align*}
+& \mathcal{J}_{GRPO}(\theta) = \mathbb{E}{[q \sim P(Q), \{o_i\}_{i=1}^G \sim \pi_{\theta_{old}}(O|q)]} \\
+& \frac{1}{G}\sum_{i=1}^G\frac{1}{|o_i|} \sum_{t=1}^{|o_i|} \biggl\{ \min \biggl[ \frac{\pi_\theta(o_{i,t} | q, o_{i,<t})}{\pi_{\theta_{old}}(o_{i,t} | q, o_{i,<t})} \hat{A}_{i,t}, \text{clip} \biggl( \frac{\pi_\theta(o_{i,t} | q, o_{i,<t})}{\pi_{\theta_{old}}(o_{i,t} | q, o_{i,<t})}, 1 - \epsilon, 1 + \epsilon \biggr)  \hat{A}_{i,t} \biggr] - \beta \mathbb{D}_{KL}\biggl[\pi_{\theta} || \pi_{ref}\biggr]\biggr\} ,
+\end{align*} -->
+
+## GRPO: Group Relative Policy Optimization
+
 
 ![Comparaison PPO & GRPO issue de DeepSeekMath](figures/GRPO.pdf){width="90%"}
 
 
+- Récompenses de précision (Accuracy rewards)
+- Récompense de format.
+
+Pas de *neural reward model* car il pourrait souffir de *reward hacking*.
+
+<!-- GRPO (Group Relative Policy Optimization) is a method used in reinforcement learning (RL) to help a model learn better by comparing different actions and making small, controlled updates using a group of observations
+
+It provides a baseline estimate of the future rewards -->
+
+
+## Pour aller plus loin
+
+- [Cours de la Fac de washington](https://faculty.washington.edu/sbrunton/databookRL.pdf)
+- [Video associée au Cours ](https://www.youtube.com/watch?v=i7q8bISGwMQ)
+
+- [The 37 Implementation Details of Proximal Policy Optimization](https://iclr-blog-track.github.io/2022/03/25/ppo-implementation-details/)
+- [Video Yannick Kilcher : GRPO Explained](https://www.youtube.com/watch?v=bAWV_yrqx4w)
+- [Blog Hugging Face sur le RLHF](https://huggingface.co/blog/rlhf)
