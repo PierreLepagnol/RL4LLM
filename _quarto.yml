@@ -1,0 +1,30 @@
+project:
+  output-dir: _outputs
+
+author:
+  - name: Pierre Lepagnol
+    affiliation: LISN
+    email: pierre.lepagnol@lisn.upsaclay.fr
+shortauthor: "P. Lepagnol"
+date: today
+
+toc: true
+toc-title	: Sommaire
+fig-cap-location: bottom
+callout-appearance: simple
+callout-icon: false
+fontsize: "10pt"
+# include-in-header:
+  # - vocabulary.tex
+
+filters:
+  - citetools
+format:
+    beamer:
+      # default-image-extension: tex
+      allowframebreaks: true
+      # include-in-header:
+        # - macros.tex
+        # - vocabulary.tex
+      template-partials:
+        - toc.tex

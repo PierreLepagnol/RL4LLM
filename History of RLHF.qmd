@@ -1,0 +1,114 @@
+**A Brief History of Reinforcement Learning and Human Feedback**
+
+Hello everyone, and welcome to another Friday afternoon talk. 
+Today, we're discussing reinforcement learning from human feedback (RLHF). 
+This talk is a re-recording of a presentation I gave at a workshop on social choice, AI ethics, and safety. 
+The main focus was on how to make RLHF more democratic and fair by improving the way we aggregate human preferences.
+
+Reinforcement learning from human feedback (RLHF) plays a crucial role in modern AI, particularly in training models like ChatGPT. 
+However, it also hides many uncertainties regarding how human preferences are incorporated into AI decision-making. 
+Despite these unknowns, RLHF has made language models significantly easier to use, which is the central theme of this talk.
+
+### The Fragility of RLHF
+
+One thing to note about RLHF is that it is not robust to fine-tuning. 
+Recent research has shown that the safety layers added through RLHF can be easily removed with a small number of fine-tuning samples. 
+This has been observed in models like GPT-4 and LLaMA 2. The reason for this fragility is that RLHF is only a thin computational layer requiring significantly fewer floating-point operations (FLOPs) compared to the broader training process. 
+Despite its thinness, RLHF has a major impact on shaping model behavior.
+
+### The Foundations of RLHF
+
+Several branches of knowledge contributed to the development of RLHF. 
+The earliest roots trace back to philosophy, with thinkers like Aristotle pondering decision-making over 2,000 years ago. 
+Psychology, economics, and decision theory also played significant roles. 
+However, the core technical advances emerged from deep learning and optimal control theories developed in the 1940s and 1950s, leading to modern reinforcement learning (RL) and deep RL.
+
+To study and build RLHF, one must acknowledge and understand these influences. 
+Every RLHF-based model is implicitly shaped by these foundational fields and their assumptions.
+
+### Understanding Reinforcement Learning
+
+At its core, reinforcement learning (RL) is a feedback-driven learning mechanism where an agent interacts with an environment and receives rewards based on its actions. 
+This trial-and-error learning approach enables exploration and optimization of behavior over time.
+
+### Early Work in RLHF
+
+Before deep learning, RLHF research primarily focused on decision-making. 
+One of the earliest notable works was the TAMER project, where humans assigned scores (ranging from 0 to 1) to an agent’s actions, essentially defining a reward function. 
+Even without deep learning, these human-provided reward models enabled agents to learn and improve.
+
+The breakthrough came with the 2017 paper by Christiano et al., which introduced pairwise preference models. 
+Instead of assigning absolute scores, humans compared two action sequences and picked the better one. 
+This method proved more effective than traditional reward signals in training AI systems to optimize tasks like robotic control.
+
+### Scaling Up RLHF
+
+In 2018, another group of researchers extended RLHF by proposing scalable agent alignment via reward modeling. 
+This approach assumed two key things:
+1. **User intentions can be learned with high accuracy.**
+2. **Comparing two outcomes is easier than generating the correct behavior.**
+
+The second assumption is crucial because it highlights why RLHF works so well—it is easier for humans (and AI models) to compare responses than to generate optimal ones from scratch.
+
+By 2019, RLHF was applied to language models, leading to significant improvements in AI-generated text. 
+The OpenAI summarization paper demonstrated that RLHF could dramatically enhance text quality, making models more user-friendly and seemingly more accurate.
+
+### The Rise of RLHF in Language Models
+
+RLHF’s success led to its widespread adoption in AI models, including:
+- **WebGPT** – a web-crawling agent trained using RLHF.
+- **InstructGPT** – a fine-tuned model designed for following human instructions.
+- **ChatGPT, Claude, GPT-4, LLaMA 2, Bard, Gemini** – all rely on RLHF as a fundamental component.
+
+More recent advancements include:
+- **Gemini's multi-dimensional reward modeling**, which considers factors like honesty and factuality.
+- **LLaMA 2's enhanced capabilities and safety measures.**
+- **Mixtral’s use of direct preference optimization.**
+
+### Mapping RLHF’s Intellectual Roots
+
+To understand RLHF’s development, a recent study mapped the key theories and assumptions that shaped it. 
+This involved:
+1. **Formal theories** – explicit mathematical and theoretical foundations.
+2. **Practical assumptions** – habits and heuristics used by researchers.
+
+The study traced RLHF’s roots to economic decision theory, psychology, and even historical philosophical ideas about preferences and utility.
+
+One foundational idea comes from 18th-century philosopher Arnauld, who suggested that preferences could be categorized as good or bad. 
+This idea later influenced Jeremy Bentham’s *hedonic calculus*, which attempted to quantify utility. 
+The Von Neumann-Morgenstern utility theorem further formalized decision theory by showing how preferences could be expressed in probabilistic terms.
+
+Another critical concept comes from B.F. 
+Skinner’s *operant conditioning*, which established that rewards reinforce behavior—an idea that underpins modern reinforcement learning.
+
+### Reinforcement Learning and Computational Advances
+
+The technical evolution of reinforcement learning includes:
+- **The Bellman equation** – a foundational approach in dynamic programming for solving RL problems.
+- **Markov Decision Processes (MDPs)** – a widely used mathematical framework in RL.
+- **The Bradley-Terry model (1950s)** – a probability model for pairwise preference ranking, which influenced RLHF’s reward modeling.
+- **Temporal difference learning** – an approximation method that improved RL efficiency.
+- **Deep RL breakthroughs** – including Deep Q-Networks (DQNs) and AlphaGo’s success in playing complex games.
+
+### Modern Challenges in RLHF
+
+As RLHF continues to evolve, several challenges need to be addressed:
+1. **Bias in base models** – Different AI models may have inherent biases before applying RLHF. 
+Companies like OpenAI and Anthropic rarely compare their models due to the difficulty of fair evaluation.
+2. **Data quality and sources** – Who provides the preference data? How do professional annotators differ from casual users?
+3. **Is pairwise preference ranking sufficient?** – Some researchers argue that more granular feedback methods are needed.
+4. **Reward model effectiveness** – Do RLHF-trained models truly align with the values set during data collection?
+5. **Should we average all preferences equally?** – For example, should medical data be given more weight than entertainment preferences?
+
+### The Future of RLHF
+
+To improve RLHF, we need to:
+- Develop **better reward models** tailored to different user populations.
+- Clearly define and **transparently state our goals** in AI alignment.
+- Evaluate **whether RLHF truly enhances safety and usability** in AI systems.
+
+As research continues, open discussion and collaboration are key to refining RLHF. 
+If you have questions or insights, feel free to reach out. 
+Let’s continue working towards more transparent and effective AI systems. 
+Thank you!
+

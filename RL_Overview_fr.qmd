@@ -1,0 +1,108 @@
+# **Aperçu de l'apprentissage par renforcement : Comprendre les méthodes**
+
+<!-- Bienvenue ! Dans cette série de conférences vidéo sur l'**apprentissage par renforcement (RL)**, nous avons couvert les bases dans les trois dernières vidéos. Nous avons discuté de **ce qu'est l'apprentissage par renforcement, comment il fonctionne et certaines de ses applications**—mais nous n'avons pas encore exploré les **algorithmes** réels qui font fonctionner l'apprentissage par renforcement en pratique. C'est sur quoi nous allons nous concentrer maintenant. -->
+
+## **Une approche structurée de l'apprentissage par renforcement**
+L'apprentissage par renforcement est un domaine vaste et **multidisciplinaire** qui se développe depuis près d'un siècle. Il fusionne des concepts de :
+- **Neuroscience** (par exemple, les expériences de Pavlov sur le comportement conditionné),
+- **Science comportementale,**
+- **Théorie de l'optimisation,**
+- **Théorie du contrôle,** en particulier l'**équation de Bellman** et l'**équation de Hamilton-Jacobi-Bellman (HJB),**
+- Et l'**apprentissage par renforcement profond** moderne, où de puissantes techniques d'apprentissage automatique sont utilisées pour résoudre des problèmes d'optimisation.
+
+Mon point de vue sur l'apprentissage par renforcement est qu'il se situe **à l'intersection de l'apprentissage automatique et de la théorie du contrôle.** Nous utilisons essentiellement l'apprentissage automatique pour **développer des stratégies de contrôle efficaces** qui aident un agent à interagir avec un environnement.
+
+Dans cette conférence, mon objectif est d'**organiser les différentes approches** de l'apprentissage par renforcement. J'espère que cette vue structurée sera utile à beaucoup d'entre vous.
+
+### **Référence au nouveau chapitre du livre**
+Ce sujet est en fait un **nouveau chapitre de la deuxième édition de mon livre** *Data-Driven Science and Engineering*, co-écrit avec **Nathan Kutz.** L'apprentissage par renforcement est l'un des nouveaux sujets que nous avons ajoutés. L'écriture de ce chapitre m'a donné une excellente occasion d'approfondir le RL, et c'est aussi une chance de partager plus de détails avec vous.
+
+Si vous êtes intéressé, vous pouvez **télécharger le chapitre** (je mettrai le lien dans les commentaires). Je partagerai également un lien vers la deuxième édition du livre une fois qu'elle sera disponible. Chaque vidéo de cette série suivra le contenu de ce chapitre.
+
+---
+
+## **Petit récapitulatif : Qu'est-ce que l'apprentissage par renforcement ?**
+
+Avant de plonger dans la structure des méthodes de RL, **revoyons rapidement** l'idée centrale.
+
+Dans l'apprentissage par renforcement, nous avons un **agent** qui interagit avec l'**environnement** en prenant des **actions.** Les actions peuvent être :
+- **Discrètes :** Exemple—jouer aux échecs, où chaque mouvement est une action spécifique.
+- **Continues :** Exemple—contrôler un robot, où les actions impliquent des ajustements continus.
+
+À chaque étape, l'agent **observe l'état actuel** de l'environnement et utilise ces informations pour décider de sa prochaine action. L'objectif est de **maximiser les récompenses futures.**
+
+### **Défis de l'apprentissage par renforcement**
+L'un des plus grands défis de l'apprentissage par renforcement est que **les récompenses peuvent être retardées.** Par exemple, aux échecs, vous ne savez peut-être pas si un mouvement est bon ou mauvais avant la fin de la partie. Il en va de même pour les jeux comme le tic-tac-toe, le backgammon et le Go. Cette **structure de récompense clairsemée** rend l'apprentissage difficile car l'agent ne reçoit pas toujours de feedback immédiat.
+
+Ce défi est similaire à la façon dont **les animaux et les humains apprennent les comportements.** Si vous entraînez un chien à faire un tour, vous devez souvent **décomposer le processus d'apprentissage en étapes plus petites** et fournir des **récompenses intermédiaires** pour que le chien comprenne ce qu'il doit faire.
+
+### **Concepts clés de l'apprentissage par renforcement**
+
+
+---
+
+## **Organisation des méthodes d'apprentissage par renforcement**
+Maintenant que nous avons établi les bases, **catégorisons les principales approches** de l'apprentissage par renforcement.
+
+### **1. RL basé sur un modèle vs. RL sans modèle**
+La première division majeure dans les méthodes de RL est de savoir si l'agent a un **modèle** de l'environnement :
+
+- **RL basé sur un modèle :** L'agent a un **modèle connu** de la façon dont l'environnement se comporte.
+- **RL sans modèle :** L'agent **n'a pas de modèle** et doit apprendre par l'expérience.
+
+#### **RL basé sur un modèle**
+Si nous avons un **processus de décision de Markov (MDP)** bien défini (c'est-à-dire que nous connaissons les probabilités de passer d'un état à un autre étant donné une action), nous pouvons utiliser des **techniques de programmation dynamique** comme :
+- **Itération de politique**
+- **Itération de valeur**
+
+Ces techniques reposent sur le **principe d'optimalité de Bellman** pour affiner itérativement la politique et les fonctions de valeur.
+
+Pour les **problèmes de contrôle continu** (par exemple, les voitures autonomes ou les systèmes robotiques), nous utilisons des **méthodes de contrôle optimal** comme :
+- **Régulateurs linéaires quadratiques (LQR)**
+- **Équations de Hamilton-Jacobi-Bellman (HJB)**
+
+Ces approches sont mathématiquement élégantes mais sont souvent coûteuses en calcul pour les problèmes à grande échelle.
+
+#### **RL sans modèle**
+La plupart des applications du monde réel n'ont pas un modèle parfait de l'environnement. Par exemple, aux **échecs,** nous ne pouvons pas modéliser entièrement le comportement de l'adversaire. C'est là que le **RL sans modèle** entre en jeu.
+
+Le RL sans modèle peut être divisé en :
+- **Méthodes sans gradient :** Aucune information de gradient n'est nécessaire.
+- **Méthodes basées sur le gradient :** L'agent peut calculer les gradients pour optimiser la politique.
+
+### **2. Apprentissage en ligne vs. Apprentissage hors ligne**
+Au sein du RL sans modèle, il existe une autre distinction importante :
+
+- **Apprentissage en ligne :** L'agent **suit sa meilleure politique actuelle** tout en apprenant.
+  - Exemple : **SARSA** (State-Action-Reward-State-Action)
+
+- **Apprentissage hors ligne :** L'agent apprend à partir d'**autres politiques**, y compris des expériences aléatoires ou passées.
+  - Exemple : **Q-Learning** (un algorithme largement utilisé en RL).
+
+L'apprentissage hors ligne est utile pour des scénarios comme l'**apprentissage par imitation,** où l'agent apprend en **regardant des démonstrations d'experts.**
+
+---
+
+## **Apprentissage par renforcement profond : La percée moderne**
+Au cours de la dernière décennie, l'**apprentissage par renforcement profond (Deep RL)** a révolutionné le domaine. Des entreprises comme **DeepMind** ont démontré que le RL peut :
+- Jouer à des jeux Atari avec des **performances de niveau humain**.
+- Battre des champions du monde au **Go et aux échecs**.
+- Résoudre des problèmes de contrôle complexes du monde réel.
+
+Le Deep RL combine les techniques traditionnelles de RL avec des **réseaux neuronaux profonds** pour approximer les politiques, les fonctions de valeur et les fonctions Q. Certaines méthodes clés incluent :
+- **Deep Q-Networks (DQN)**
+- **Méthodes de gradient de politique**
+- **Méthodes acteur-critique**
+- **Contrôle prédictif de modèle profond (Deep MPC)**
+
+Ces approches basées sur l'apprentissage profond ont considérablement élargi les capacités de l'apprentissage par renforcement.
+
+---
+
+## **Conclusion et prochaines étapes**
+Cette conférence a fourni un **large aperçu** de l'apprentissage par renforcement et de la façon dont les différentes méthodes sont classées. Dans les prochaines conférences, nous allons **approfondir** :
+- Les **processus de décision de Markov** et la **programmation dynamique**
+- Le **Q-Learning et l'apprentissage par différence temporelle**
+- Les **techniques d'apprentissage par renforcement profond**
+
+Cette approche structurée vous aidera à acquérir une **solide compréhension** de l'apprentissage par renforcement. Restez à l'écoute, et j'ai hâte d'explorer ces sujets avec vous !

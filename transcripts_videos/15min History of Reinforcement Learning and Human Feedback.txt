@@ -1,0 +1,431 @@
+15min History of Reinforcement Learning and Human Feedback 
+ 
+all right everyone we're here for another Friday afternoon talk recording
+on reinforce and learning from Human feedback as usual I'm trying to
+re-record any talk that I give in a closed Forum this one was from a
+workshop on social choice for AI sep ethics and safety where really the focus
+was trying to understand how to make a technique like reinforcement learning
+from Human feedback where you
+aggregating human preferences more
+democratic and liberal by understanding
+how to aggregate preferences in
+a what some might call effective or fair
+or unbiased manner.
+
+Really we're going to talk about the things you should know about the history of reinforcement
+learning and human feedback.
+it's kind of intentional clever title here, Follows a paper that I'll put as a link in the description.
+So to start rlf this meme is surprisingly apt I've used it in other talks in the past.
+Reinforce learning from Human feedback was the last necessary component to make something
+like ChatGPT a reality but it's come covering up a lot of unknowns in the language models about how preferences
+are handled about what means to be human even just the fact that we don't know how these models work is overshadowed by
+the fact that they are now easy to use this is the focus of the talk.
+
+Something that we should know in relation to this meme is that rlf is not even robust to fine tuning.
+we've seen many papers in the last few months removing the rhf safety later layer from
+openly fine-tunable models this works in
+gp4 this works in llama 2 just a few
+fine-tuning samples make it so this
+notion of rhf is kind of a metaphor for
+safety breaks down and this sort of thin
+layer in the compute probably due to the
+fact that way fewer flops are used in
+the rhf phase that's the like floating
+Point operations how much computed it
+is it's a it's a thin layer there's not
+it's not robust right now but it
+represents a lot for these
+models to start here are the different
+branches that really made us converge on
+r Che the gray arrows are implicit links
+to multiple Fields where these are kind
+of things that inspired other fields so
+you can see the earliest links are for
+philosophy I've referenced Aristotle's
+work in works on rlf that's over 2,000
+years ago and then things like
+psychology and economics and decision
+Theory but the core techniques really
+came out of this deep learning and this
+optimal
+control work in these areas that are
+both from around the 1950 s 1940s and
+they grew into reinforced learning deep
+RL language models and everything like
+this but this shows the basic complexity
+that you need to internalize if you're
+going to consider working on rhf to
+study and to build rhf implicitly means
+that you're building on these other
+fields and you should understand what
+the assumptions implicit to your work
+are with respect to other World
+Views at a technical level rhf is about
+reinforcement learning reinforcement
+learning is a feedback mechanism you can
+see an agent interacting with an
+environment and getting a reward this
+implies the core functionalities of
+feedback and the core functionalities of
+trial and error
+learning exploration not going to talk
+about the technical side too much in
+this talk but this is also essential to
+understanding where our lhf is
+going because it led into the early
+works of rhf reinforcement learning from
+Human feedback really started in the
+decision- making realm before deepl
+there were multiple works this is just
+one of them called Tamer that I
+highlight in most of my talks where a
+human assigned a score from zero to one
+to every action it assigned the it was
+the reward function and then even
+without deep learning methods you could
+use this reward model that humans gave
+basic scalers no comparisons yet to to
+be used in an agent and then the popular
+paper the Cristiano at all deep RL from
+Human preferences newspaper is the first
+one where these kind of um pairwise
+preference models came in so the humans
+were shown two trajectories they chose
+the best trajectory with respect to a
+task and then this trained a reward
+predictor that could take in state
+action data and return a scalar value
+this was used by the policy to
+optimize um RL control tasks things like
+a walking robot a carple swing up and
+these pawise comparison of trajectories
+proved even more powerful than the
+reward signal from the
+environment this is a pretty profound
+paper recommend looking at it even if
+you're just working on language models
+today it shows how human preferences can
+Encompass information outside the
+context of a specific action or a
+specific word and how that kind of can
+change how you're approaching problems
+recommend reading it this is where
+everything started from and we continue
+from here in 2018 a very overlapping
+group of auth from this Cristiano at all
+paper proposed scalable agent alignment
+via reward modeling this is where reward
+modeling really became a thing there was
+two assumptions to this paper the first
+one is a little bit less core to where
+we are today but not surprising if you
+follow the AI alignment literature which
+is we can learn user intentions to a
+sufficiently high accuracy seems pretty
+important but the second one is crucial
+to how rhf works for many tasks we want
+to solve valuation of outcomes is easier
+than producing the correct Behavior this
+essentially means it's easier to compare
+two things than it is to generate it's
+easier to compare two poems than it is
+to generate a good poem this is the
+fundamental assumption to what rhf is
+built upon now which is it's easier for
+humans or gp4 to compare two model
+answers to a prompt than it is for a
+model to level up on its own to the next
+set of
+capabilities quickly after this the
+in 2019 is is where we first seeing the
+see these kind of rhf feedback diagrams
+that are now popular today this is the
+first paper that talks about
+using binary preference data on language
+models using sentiment classifiers on
+language models showing the dramatic
+effects rhf has in 2019 if you're
+working in the space you need to read
+this paper simple enough lots of great
+experiments this led to the paper
+everyone knows about this LEDs to the
+open AI summarization experiments which
+was really the first paper where people
+went oh crap this is doing a ton to the
+language models this is dramatically
+changing the style of the model it makes
+it much more usable it makes it seem
+like the model is more correct and we're
+starting to see the impacts of R lhf in
+2020 and this is almost three years
+later before people really realized it
+was a big thing what this looks like we
+have trading prompts from Reddit which
+are like asking to summarize a long
+Reddit post looking for advice so this
+is about if someone should go to grad
+school in CS and if you look at the base
+model in this paper it's going to be
+repetitive you can pause and read the
+text if you want to but this is a very
+normal language model um degraded
+Behavior being repetitive and you add
+additional human data to the loop this
+is an example of an annotation which is
+now called instruction data and if you
+do this fine-tuning if you do rhf the
+outputs of the model really end up
+becoming much more faithful to the text
+you want to meet mirror and just much
+better for the use case in this case
+summarization across a variety of uh
+blog documents and
+questions today everyone knows about rhf
+we have web GPT which is a web crawling
+agent that they've trained reward models
+for again open AI instruct GPT the basis
+of a lot of modern research questions
+training instruction following model
+which led to chat GPT then Claude gp4
+lomat 2 Bard Gemini mixol these all use
+rhf as a core
+component some of the more interesting
+recent ones Gemini uses kind of a
+foreheaded output where they have things
+like honesty factuality something and
+something so it's not just one scaler
+reward lomito has capabilities and
+safety mixt will use direct preference
+optimization there's a lot going on in
+this space but rhf has relied upon the
+recent history is much more transparent
+to people and much more studied but the
+a lot more older things that we need to
+know and how it informs this
+work so the goal of a recent paper that
+I did is to construct the minimum tree
+of methods and ideas that led to Modern
+rhf and what we did essentially is we
+created a set of assumptions which are
+theories in the creation process so
+really explicit math really explicit
+literature and presumptions which are
+kind of tools and habits of the people
+building these Technologies it's not
+exhaustive because if you were to write
+every link to other fields about
+reinforcement learning in human feedback
+it would be a gigantic textbook you can
+scan the screen for the paper it's on
+archive but this is what we kind of did
+and the motivating idea for people that
+come from non-cs backgrounds this will
+make a lot of sense is what are the kind
+of implicit assumptions between
+optimizing a cost function as people do
+in optimal control optimizing a reward
+function as in RL and some psychology
+thing experiments and then what does a
+preference mean it links to econom ICS
+it's much more vague I don't really
+think that saying you optimizing a
+preference may not even be a viable
+assumption at all like you might not be
+able to optimize preferences they some
+people believe preferences don't exist
+so how did we get here through a longer
+term
+lens disclaimer this is Joint work we're
+not an expert on everything please reach
+out if you feel like we missed something
+crucial but again it's not an exhaustive
+search but what people are using to
+build
+rhf
+so the kind of first assumption and
+assumption one plus is that preferences
+exist and that you can quantify them
+there's early work from philosophers so
+arnull wrote The Port Royale logic which
+is essentially starting to reason that
+some preferences will be good and some
+will be bad and you can assign
+probabilities to them which was really
+popularized in Jeremy bentham's honic
+calculus which is where people started
+to try to compute Notions of expected
+utility it wasn't called that back then
+but that's what it was looking like we
+could quantify any
+preference and then the next kind of
+fundamental thing is something called
+the Von noyman morgenson utility theorem
+if you're working with utility functions
+at all if you're looking at
+utilitarianism this assumption is or
+this theorem is the fundamental piece of
+work that utilitarianism as like
+economic theory and decision Theory came
+out of which is essentially saying that
+you can compare preferences and
+formulate them as probabilities with
+expected payoffs both for good and bad
+outcomes recommend looking at it if
+you've never heard of it just good
+Wikipedia article give it a skim but
+this is really that like we could do
+anything with expected utilities and fit
+that into human
+Frameworks and then there's kind of that
+idea that is so Central to reinforce
+learning that some people don't even
+think about it which is like the notion
+of reward and making that number goes up
+go up up means that your behavior is
+improving this comes from psychology
+literature and operant conditioning
+which is used for training the study of
+training animals with reward um this was
+like from Skinner and this transformed
+eventually into a notion of utility to
+go which actually came from the analog
+circuits
+realm which people also wouldn't expect
+you can find the link to that in the
+paper all of these things we cite in
+this history and risks paper
+below
+and then comes kind of RL ideas that are
+explicit into the math things like the
+Bellman equation and the Markov decision
+process the mdp is an experimental setup
+the Markov decision process is the mdp
+where tools like Bellman equation which
+is a dynamic programming approach can
+solve for Optimal Solutions in a kind of
+defined State action environment this is
+what a lot of modern aial tools build
+off of the fact that we can get Optimal
+Solutions if we set up the problem
+correctly
+here we're going to take a bit of a left
+field turn but essentially there's a
+presumption that we can reduce
+preferences to par wise preferences the
+link back in time to the 50s is
+something called the Bradley Terry model
+which is a probable a probability that
+one preference will beat another in a
+parz fashion this is the math that is
+used in the reward modeling of rhf and
+it was brought in in this Cristiano at
+all paper that you hear about all the
+time
+and this here where the RL literature
+starts to turn away from optimality but
+into approximate methods there's a ton
+of links that we could include here I
+put some of the core ideas like temporal
+difference learning TD gamon which is
+from tessero at all which is the first
+time a deep RL algorithm solved a game
+and it was in back gamon funnily enough
+if you've ever played and then the
+obvious things like deep mins dqm for
+Atari work and everything in the modern
+world where RL is working great in
+simulation
+and then the last of these really come
+from this really recent work from
+instruct PT chat PT Claud which is
+scaling up these methods and showing
+that you can aggregate preferences from
+multiple labor label labelers you
+actually get the preferences from data
+reinforcement learning doesn't
+manipulate the preferences things with
+the base model and everything there's
+more presumptions that we could probably
+list with recent work but we're just
+trying starting to understand how these
+techniques are used in the real world
+here's a slide you can look at if you
+want to read through these in text again
+please reference the paper if you want
+more
+context but really given all of these
+assumptions and presumptions we should
+ask some questions on how do we address
+these how do we understand the risk with
+the base models we should understand if
+different base models carry biases with
+them before we get to the preference
+data places like open Ai and anthropic
+are not incentivized to compare based
+models of their competitors because it's
+really hard to train them with rhf it's
+hard to take that other base model and
+do this comparison with state-of-the-art
+resources but we should be doing this
+and then we should see how these kind of
+biases or potential risks come in at the
+base model at the instruction tuned
+model at the RL model and after any
+safety filters are applied we should be
+auditing each of them sequentially with
+this notion of
+preference a lot of the data questions
+have been asked which is like whose
+preferences are we aggregating over but
+there's a lot of other context questions
+that are really interesting like does
+data from professional versus users
+professionals as in people who are paid
+to collect data or users people just
+using chat tobt does that change the
+preferences that are encoded in the
+model is par wise preferences enough
+there's early research that people are
+trying to understand fine grained
+feedback and then this question of who
+what where what what is this data we
+don't know more on that in another
+talk training how does using these
+powerful RL optimizers extract
+information from reward model at the
+beginning of the process for training a
+reward model and collecting preference
+data you write out a set of values that
+you want the people collecting the data
+to give and the question is does the
+model actually get the priorities that
+we set out at the beginning of the data
+collection
+process no one knows everyone does it
+but it's never talked about and then
+should we just be averaging again so
+much of ml is built over averaging over
+batches of large data should we be
+averaging every domain equally should
+Healthcare data be prioritized over some
+other sort of preference should we be
+cleaning this I don't know someone can
+answer that for me so really what this
+comes down to is we should work on what
+ass soot technical that's not the best
+word soot technical is an overloaded
+term what is a good reward model for
+each population of people that are going
+to be using language models what does
+that mean how do we better Define and be
+arent about our goals and then how do we
+evaluate reward models for capabilities
+why does rhf improve things like alpaca
+Val and Mt bench and really do our
+reward models en code safety is that
+something that people are still doing on
+the training side of
+things thanks for watching reach out if
+you have any questions and let's keep
+doing open science thank
+you

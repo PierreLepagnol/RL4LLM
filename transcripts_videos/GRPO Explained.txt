@@ -1,0 +1,1427 @@
+Transcript for video ID: bAWV_yrqx4w
+hello there today we're looking at Deep
+seek math pushing the limits of
+mathematical reasoning in open language
+models now this paper is a bit older um
+it's from as you can see over here from
+the 27th of April 2024 nevertheless it
+introduces something called grpo the
+group relative policy optimization which
+um is also a component in deep seeks R1
+model and since everyone is in deep seek
+crazy right now anyway I thought we'd
+look at this paper uh we also discussed
+this paper in the Saturday paper
+discussions every Saturday almost every
+Saturday on our Discord um join us it's
+fun and it's always a good good
+discussion and yeah if you want to
+present some paper we're more than
+welcome to address the group all
+right I've left some notes in from that
+paper discussion as you can see but
+don't let yourself be distracted we'll
+handle
+it as you can see the uh paper is
+ultimately aiming to win at math so this
+is the top one accuracy in a math
+benchmark so this is a benchmark where
+you get some kind of high school math
+problem and you're supposed to figure
+out the answer to that problem like John
+has four apples and hands off to now how
+many does he have or more complicated
+questions in you know things like
+algebra geometry and so on but there's
+always some kind of task and then some
+kind of answer and that answer can be
+accurate or not accurate like it can be
+correct or not correct so you have a
+good method of scoring these models like
+it's like scoring whether they get the
+correct answer and as you can see the
+model they end up with which is their
+deep seek maath 7B so 7 billion
+parameters is on par with some of the
+most you know largest and most advanced
+at least at the time uh publicly
+available commercial
+apis like gbt 4 and Gemini Ultra and for
+all we know these are massive models
+that have been you know trained various
+and various proprietary data set and yet
+the 7 billion parameter models
+outperforms them now to be said the big
+models are General models meaning they
+can do whatever and this math model is
+specifically tuned for these kinds of
+math problems but still it is quite um
+an improvement over all other models
+that have been specifically trained to
+do this task and it is quite an
+improvement over the generalist models
+that are typically you know not so bad
+at this stuff so how did they do that
+they do the do this by a I would say a
+two-prong approach first they collect a
+very high quality data set for what they
+want to do and they collect a lot of
+that data so they have a method that
+that allows them to scale data
+collection while keeping the relevance
+and quality of the data High to the task
+that they want to do and on the other
+hand they introduce this grpo which is a
+variant of proxim policy optimization
+that has a few benefits over proximal
+policy optimization notably you don't
+need a value model for grpo which means
+that you know an entire model to train
+Falls away and you get to use all that
+memory and compute on your main model
+all right let's dive into it so the
+first thing they do here is they collect
+a data set they say here they create a
+data set called Deep seek math Corpus a
+large scale highquality pre-training
+Corpus comprising of 120 billion math
+tokens they extract this from common
+crawl common crawl is a giant data set
+that is simply crawled websites so
+website crawler collecting all kinds of
+websites dumping them and um or dumping
+the links I'm not entirely sure what the
+data set exactly contains and what you
+have to go download but in in any case
+it's just a a
+random huge pile of website data and out
+of that they draw this data set now
+what's interesting about this is that um
+they they don't go about you know
+creating synthetic data they don't go
+about creating new data or something
+like this what they essentially show is
+that there is a lot and this 120 billion
+uh tokens here is going to be many times
+larger than any comparable data sets so
+like an order of magnitude larger data
+set than other targeted math data set so
+what they show is essentially there is
+there is enough good data even in like
+internet dumps uh if you can just get it
+out if you can just move through that
+data in some particular way to find the
+high quality data you can
+achieve very very good things so to
+anyone who's working on fine-tuning such
+models for you know particular domains
+or particular tasks this is a very
+important result because yeah it shows
+that the data is technically there and
+by selecting it well you can get a a
+very large performance
+boost they do this in an iterative
+fashion so we'll jump right into the
+section
+where they do that here data collection
+um as I said the process of constructing
+a deeps math Corpus it's an iterative
+pipeline um that demonstrates how to
+systematically gather large scale
+mathematical Corpus from common Chrome
+so they start with what they call a seed
+Corpus a seed Corpus is a small set of
+relevant data to your task now there's
+two problems with the seat Corpus first
+of all it is small um as usual like for
+example this open web math uh data is a
+collection of high quality mathematical
+web texts but it's small someone has
+collected it so that's one problem and
+the other problem it's usually not
+diverse enough so rarely is there a DAT
+a small data set that exactly aligns
+with the domain you want to find tune on
+uh either it is related to it or it's a
+subset of it but the diversity is very
+often not there in most kind of
+constructed data sets so most data sets
+that are not collected but constructed
+are geared towards a very very specific
+subset like think even something like
+imag net which at the time was huge
+right it was only a tiny subset of
+object classification because it focused
+mainly on dogs um it focused on a very
+particular type of picture namely a
+picture where there was largely one
+object and it was kind of in the middle
+and it focused on very particular kinds
+of labels and classes so while image net
+is a great data set it's only a small
+subset of what you would kind of call
+Visual recognition the the broad task of
+visual recognition even if you talk
+about object object recognition so the
+goal is to take this seed Corpus and
+expand it both in size and in quality
+how they do that they do that as I said
+in this iterative method so starting
+with the seed Corpus over
+here they first train a model they train
+a fast text model which is a like a text
+classifier model uh very scalable very
+kind of lightweight but usually powerful
+enough to do these kinds of tasks so
+they take the seat Corpus and they take
+random other web pages from common crawl
+and they train a discriminator to
+discriminate between uh things that are
+like the seed Corpus and things that are
+unlike the seed Corpus specifically they
+I believe they take about 500,000 data
+points from the seed Corpus as positive
+training examples and 500,000 web pages
+from common crawl as negative training
+training examples then they train a
+classifier to split those two one
+criticism or well not criticism one
+comment here is that sometimes in these
+kinds of things um something called hard
+negative mining is employed I did not
+read any of this here so it must have
+been good enough but it sometimes um
+let's say you just train a classifier
+between this seat data set and random
+websites what can is that the random
+websites are so different that a lot
+more stuff gets classified as positive
+than you would necessarily like uh and
+then you have to resort to to hard
+negative mining so maybe you know here
+is math and then um here is like I don't
+know gardening which you also sometimes
+have to calculate you know how much dirt
+you need how much fertilizer and so on
+and you know here are all kinds of other
+random websites if you train a
+classifier it will like split through
+here if you equate them and so you have
+all this gardening content in on your
+positive side so yeah there are other
+ways of constructing this so that you
+get a more narrow boundary here but if
+it's not necessary then
+good so using this model they now sift
+through common craw uh they have a a
+kind of a cleaned D duplicated version
+of common crawl that they do which
+consists of I think like 40 billion um
+websites so through that they sift and
+they classify with their model they
+explicitly say they only retain very not
+just stuff that the classifier labels as
+positive but they say we rank the
+collective Pages according to their
+scores predicted by the fast text model
+and only preserve the top ranking ones
+so by modulating that threshold you get
+to control kind of
+how close to the seed Corpus you are and
+they say we choose to keep the top 40
+billion tokens in the first
+iteration so that's a first iteration
+sift through all of um of the Corpus
+using your classifier keeping the 40
+billion tokens that rank the highest and
+that's it so now how do we get from 40
+billion to 100 20
+billion so now they have an extended
+Corpus and then they do they say okay we
+discover what they call math related
+domains so they use the fact that we are
+collecting websites here and websites uh
+have a URL and that URL is usually
+something like you know
+[Music]
+google.com SL blah blah blah blah blah
+you know
+reddit.com blah blah blah blah blah
+pets.com
+blah blah blah blah blah okay
+so what they do is they say we assume
+that largely um given a domain name the
+following pages are somehow
+related and therefore you know like in
+pets.com is very clear they all revolve
+around you know some certain amount of
+topic so when we now group all of these
+40 billion or of this 40 billion entire
+common crawl set we group into their
+domain so we do big group by their
+domains and then we see so if within one
+domain let's say you have something like
+math
+exchange.com
+right if within one domain more than we
+count the number of websites that have
+been classified as positive like that
+have remained in our data set and if
+more than
+10% of domains under a given domain name
+uh of URLs under a given domain name
+have been classified as positive then we
+reconsider the entire domain okay so
+it's essentially an expansion step you
+assume that if more than a certain
+threshold of URLs inside of a domain
+have been classified as a particular
+topic it's very likely the entire domain
+at least has some relation to that topic
+and you should consider the other URLs
+in that domain as well you should kind
+of reconsider even though your
+classifier didn't classify
+them so that goes into here that goes
+into
+um an annotation process now I was not
+entirely sure how that annotation
+process goes
+exactly so they say we manually annotate
+the URLs associated with mathematical
+content Within These identified
+domains I'm not sure if that means like
+humans actually sift through it and
+annotate them I don't know if they do it
+based on the URL itself or actually
+going to look at the websites um or if
+they have some llm as a judge or
+something like this but there is um some
+sort of external entity looking at all
+of these things inside of the all of
+these URLs again and deciding whether
+they should be part of the Corpus so
+this is where you expand your uh
+diversity if you will so you reconsider
+stuff that hasn't been considered by
+your classifier and you know you you
+expand Within These domains and that
+then goes into your data set and that
+becomes the seed data set for your next
+iteration so again you train a model and
+now what happens is that because here
+you reconsidered a whole bunch of stuff
+um and added that to the data set now
+your model has a broader scope your
+model has a better idea of what you want
+in the data set just beyond that initial
+seed Corpus and therefore it's going to
+classify more stuff as positive you can
+choose to keep more tokens than just the
+initial 40 billion ones um and go again
+and if you do this clustering by domain
+again you will all of a sudden notice
+that yeah for example let's say GitHub
+github.com
+in in the first iteration it was maybe
+just 2% of websites that were classified
+positively by the classifier and
+therefore it's like nah but now now that
+you've gone that you added kind of all
+of math exchange because you
+reconsidered it last um iteration your
+classifiers kind of idea of what
+consists in what what the data set is
+broadens and therefore it might be that
+in this round you know like all of a
+sudden 12% of GitHub falls into that
+category so that means that in this next
+step you are going to re-evaluate all of
+GitHub and again you know through that
+annotation process add additional things
+into your seed Corpus for the next round
+so you can see how this slowly
+iteratively broadens the scope in size
+because the classifier is able to kind
+of annotate lot of web pages given the
+seat Corpus and in diversity because
+once a domain is annotated enough you
+reconsider it and you add a bunch more
+stuff that wasn't classified by your
+classifier so it kind of pushes itself
+up now there are two possibilities here
+possibility one is that this goes on
+forever and ultimately you'll have the
+whole internet in your data set right
+because you just keep expanding keep
+expanding keep expanding possibility two
+is that in fact through you know this
+annotate this manual annotation process
+here um having some idea what they want
+that this is going to converge to some
+stage where okay everything that the
+model tags as positive kind of is
+already within the domains that are
+considered and no and no new domains are
+being added from the last iteration and
+therefore the manual annotate annotators
+they see nothing new which means the
+model gets no new data and so on so it
+kind of
+stabilizes um and in this particular
+case here it seems that exactly the
+second thing is true which is lucky uh
+because otherwise where do you stop to
+but they say after four iterations of
+data collection we end up with 35.5
+million mathematical web pages totaling
+120 billion tokens in the fourth
+iteration we notice that nearly 98% of
+the data has already been collected in
+the third iteration so we decide to
+seize the data
+collection okay so now we have a data
+set now what do we do with the data set
+well we train a model on it and see how
+well it goes so not regarding any sort
+of reinforcement learning or any sort of
+instruction tuning the first step that
+they do is just kind of a validation
+experiment just taking a base llm um in
+this case a smaller llm 1.3 billion
+parameters and training it on for one
+their data set that they collected and
+on the other hand on a bunch of other
+data sets right here uh that you know
+are are available for these kinds of
+questions and they see what happens
+evaluating on several benchmarks so this
+is the resulting table right here now
+what you'll see is that the data set
+trained on and the benchmarks are
+different and I think that's important
+right here right if you have if you
+train on the exact data set of The
+Benchmark then sure you're going to do
+well but that's not what we're after
+we're after some kind of generalization
+and therefore
+uh this is you know you have to train on
+something else then you
+evaluate
+now in this table you can see if you do
+no Math training at all with this base
+llm you get some scores relatively low
+scores um on various things
+now if you actually train on these math
+data sets you see you do get better in
+general but if you train on deep seek
+math Corpus you get a lot better as you
+can see right here so two notable things
+one notable thing is that there's a
+clear Trend as your training data sets
+get bigger the performance increases
+meaning that even in this sort of
+targeted data scenario having more data
+is important now the base model will
+have had already a lot of training data
+so it's not just more data of any kind
+but more relevant data and that's why it
+is important that this paper develops a
+method to find relevant and let's say
+high quality but I guess mostly relevant
+in the way they classified relevant data
+at scale more data is still better but
+it needs to be in the domain that you
+use it for otherwise it doesn't do you
+much good so more data is better in this
+sense but also what you can see is that
+uh because this is not a constructed
+data set it's like a scraped collected
+classified data set from the general
+internet um it does also perform well on
+what they call Chinese benchmarks so it
+it's also more multilingual than the
+other data sets and that makes it
+benefit also on on multilingual data
+sets so the gain is larger in the
+Chinese benchmarks than in the English
+benchmarks because the uh reference data
+set they do they are more monolingual in
+just in the way they're
+constructed all
+right yeah they point out here okay our
+data is high
+quality
+um because our model is good the high
+quality is we talked about this in the
+paper discussion it's you know what does
+high quality data mean nobody really
+knows I would I would say it's relevant
+data like um not high quality means
+relevant I would classify this Corpus in
+particular more as like the feature is
+more that it's
+relevant um rather than high quality
+which is a very vague term in a sense in
+any way they say okay we're better which
+could also be due to the fact that they
+just have more relevant data doesn't
+need to be higher quality necessarily
+it's multilingual and it's large scale
+several times larger than existing
+mathematical
+corpora all right so now they have a
+good data set now they are actually
+going to build their real model if you
+will they buil this deep seek math base
+7B Model A 7 billion parameter model
+that is initialized with deep seek coder
+base 1.5
+7B so they make a deliberate choice to
+start out with a model that's um
+pre-trained on code and they have some
+justifications further down where they
+evaluate different pre-training
+modalities and they do find that code
+pre-training is very relevant for uh
+these kinds of math um
+of math problems interestingly they also
+find that pre-training on
+archive is not so important at least in
+isolation so if you just train on
+archive uh the benefit for the
+downstream performance of these kinds of
+math benchmarks seems to be very very
+little or very minimal um I can I guess
+I would guess you can explain that by
+the fact that archive papers um are are
+mostly about communicating math and not
+necessarily about kind of deriving
+Solutions in math someone in the paper
+discussion also pointed out which is
+correct that you don't really put the
+derivations if you do if so if you
+actually solve something let's say you
+just kind of pose the starting point
+like okay we assume these things and
+then you pose the end and say this can
+be reformulated into this right here and
+very very often there's no explicit
+derivation uh or goal direction or
+something like this so if pre-training
+on archive seems to teach the model
+maybe more about lwtech and math
+notation rather than actually solving
+mathematical problems two different
+things okay so
+they take their data set and they mix it
+with a bunch of other data set uh 56%
+is their data set then some algebra
+stack they do include archive here uh
+they do include GitHub and they do
+include some natural language data from
+common crawl in both English and Chinese
+and they train for 500 billion tokens so
+their own data set has 120 billion
+tokens and uh they add some other data
+on top so since this is
+56% uh we can guess that gets them to
+about 200 and some billion tokens so
+they go through the data Set uh twice if
+you
+will during their training you can see
+here what this does this specifically
+there are two tables right here the top
+one measures simply Chain of Thought
+prompting on these math puzzles and the
+bottom one
+measures uh tool use so if the model is
+allowed to use some external python
+environment to do computations or or a
+proof environment I think um I guess
+most people are well I guess both are
+interesting as as you could have
+imagined as you could have
+um guessed you know since it's their
+paper they do outperform everything else
+by quite a significant margin um
+including models that are specifically
+trained to do this kind of thing you
+know like theirs is including models
+that are several orders of magnitude
+larger than they are like this 540
+billion parameter model right
+here which is
+impressive the same goes for Tool use so
+if you consider um problem solving with
+tools and also a related category uh
+informal to formal proving where you
+know they have to um prove some
+statement in a formal
+fashion or formal some proof uh the
+model also performs performs quite well
+I'll let you dig into these benchmarks
+by yourself but just note that the
+differences are significant it's not
+just like oh we got
+0.1% better on some Benchmark the
+benefits here are consistent and
+significant now this is the this is not
+where it stops so they
+um they now have a model that's been
+pre-trained on code and further kind of
+language model trained on their on their
+collected math corpus now they go
+further and they say can we also do some
+find some instruction fine-tuning so
+they take um they take a data set they
+they say we anal notate GSM 8K and math
+problems with tool Integrated Solutions
+and adopt a subset of math instruct
+along with training set of Leela o OD
+where problems are solved with Chain of
+Thought or program of thought these are
+prompting techniques so they construct a
+fine-tuning data set where models are
+you know where where there specifically
+shown how to solve problems using Chain
+of Thought because it's one thing to do
+Chain of Thought prompting with a
+regularly trained language model but
+it's another thing to explicitly teach
+the model with training data how to do
+Chain of Thought They do I think they
+construct this data set or data sets in
+English and Chinese and they train on
+for about 500 steps with a batch size of
+256 so as you can see right here uh the
+this is what 2 to the 8 this is 2 to the
+9 so that's like 2 to the 17
+this is not super many data points right
+so they it's just we know this if you
+want an instruction tune you don't
+actually need that much
+data like 2 to the 17
+is is what I don't know but not much
+um
+10 yeah it's like 100,000 or
+something um
+cool results are down
+here as you can see the best models is
+still in this kind of benchmarks are you
+know closed sourced models like GPT 4
+Gemini Ultra they do reach quite some
+performance although not so good in
+Chinese however as as you can see here
+this instruction tuning already gets
+these models Beyond most open source
+models and very close to these closed
+sourced models actually beating a lot of
+the closed Source models as well and if
+we go further and do RL on top so
+reinforcement learning on top you can
+see that the they surpass all open-
+Source models even open source models
+that are 10 times Lar larger than they
+themselves are even open source models
+that are 10 times larger and trained on
+math um so that that is quite impressive
+they also achieve a good performance um
+like same qualities on Chinese and again
+they get really really close to these
+many times larger Clos tour models so
+what is this final RL this final
+reinforcement learning step so on top of
+the supervised fine tuning the
+instruction tuning they now go and they
+do this reinforcement learning um using
+group relative policy optimization so
+grpo uh in short is a variant of
+proximal policy optimization now in
+reinforcement learning uh you typically
+right the setup is you have some actor
+um and you have some
+environment and what you do is you from
+the environment gives you what's called
+an observation in this particular case
+the environment gives you a question
+or a math problem that's the question
+that the environment gives you and then
+what you do is you give an action and
+the action in this case we call O the
+output of your model so you you get a
+math question and you're supposed to
+deliver an output which is you know
+whatever your language model outputs
+maybe it has some Chain of Thought
+prompting in it and blah blah blah but
+at the end there should be the solution
+notably the environment then responds
+with a reward and the reward in this
+case is either you did it or you didn't
+do it so the environment will look at
+your solution see at the end you know
+did you get the correct solution and
+give you a reward or give you no reward
+and the process of reinforcement
+learning is this actor here in
+internally will have some sort of neural
+network and we usually call this the
+policy so the policy um Pi usually
+denoted it will take an
+observation and it will output an
+action this is our llm so our llm is the
+policy if you will usually you denote Pi
+Theta to um denote that the policy is
+parameterized so this is the same as
+essentially writing that the output is
+what you get when you stick your
+question into the llm uh together with
+your llm parameters I mean you can write
+this here or you can write it here just
+showing that your llm is parameterized
+and the task of reinforcement learning
+is can you train your llm can you
+fine-tune your llm to make the reward go
+up the problem is usually you have a
+loss function usually you're going to
+have your o you're going to stick it
+into a loss function of O and
+O uh I don't know how to how to denote
+this
+o not hat hat is the hat is the
+approximate one so let's let's say this
+is your output I'm going to I'm going to
+check oh check mark okay so we have the
+correct answer right here and we have
+your answer right here and we're going
+to stick it into a loss function usually
+something like cross entropy and then we
+can take the gradient with respect to
+the parameters of that loss function and
+that is like that is perfect we can do
+back propagation we can train in
+reinforcement learning that's not
+possible because you have no clue how
+this reward is being done maybe it's a
+human looking at it and saying good job
+maybe it's an llm as a judge maybe it's
+a regex or something something like this
+but for sure it's not
+differentiable so that's the challenge
+of reinforcement learning and many you
+know types have many techniques have
+been uh evolved notably one that's
+called uh
+trpo uh trpo trust region policy
+optimization is itself a mixture between
+trust region optimization and you know
+applied to policy learning um and then
+the this has been approximated uh in a
+in a algorithm called po proximal policy
+optimization and the group policy
+optimization is another derivation um
+group relative policy optimization is
+another derivation from po so very
+briefly if you already know a lot about
+reinforcement learning these next two
+minutes might bore you but very briefly
+when we do policy like when when we
+tackle this problem right here there
+couple of different variants of
+reinforcement learning but we're mostly
+concerned with a thing that's called
+policy learning which is exactly our
+case here where our policy is directly
+parameterized with parameters uh so we
+have a function that takes in the
+observation and spits out the action
+right and and that function itself has
+parameters that can be learned which is
+different to for example Q learning is
+where you learn the Q function and then
+the action is simply derived as a you
+know you look at which action um makes
+the Q function go up but in this case
+the policy is directly parameterized and
+we want to learn the policy so
+ultimately we are after a d Theta like a
+what or a a Delta
+Theta like what how should we update our
+parameters you usually that is the
+gradient of the loss function with
+respect to Theta that that's our usual
+step maybe with some step size and then
+we do gradient descent we cannot do this
+here what we can do is something called
+the like the method is called
+reinforce
+Force which is the following um it's
+easier to think of
+not like language model learning it's
+easier to think of Pac-Man okay so here
+is Pac-Man boop boop boop and you have
+at any point you have four actions go
+right go up go left or go down okay uh
+those are your four actions that you
+have available and you need to choose
+one each frame you need to choose an
+action and depending the observation is
+the whole board now um
+what you do again you stick your
+observation into your policy and
+outcomes some some action the action
+then uh goes into your environment and
+that gives you your
+reward the problem is you don't have a
+loss function so you don't know whether
+your action was correct or not in a
+usual classification problem you would
+know whether your action is correct or
+not and you would have a cross entropy
+loss
+um
+so what you do here is you simply assume
+you just assume that what you did the
+action you took is the correct action
+and bear with me uh for all the people
+protesting
+now what that if if you have that that
+your cross entropy loss actually just
+reduces um so your your uh loss actually
+just reduces to be the
+log um
+policy of your
+observation okay so if if you assume
+that the action you did is the correct
+action then it's just this because
+you'll have you know you'll have output
+some kind of distribution okay uh you do
+this action that's the highest here and
+you compare that you do the cross
+entropy loss with the distribution
+that's 0 0 1 0 right that's ultimately
+what you do in a cross enty distribution
+do a one hot encoding of the correct
+label and then you
+compare okay and now you multiply that
+with your
+reward okay what does this
+do
+so actually negative
+maybe um so maybe that's the loss or the
+objective function not really sure
+whether negative or positive but um the
+sense here is if your reward is high
+then you you are in fact correct in
+assuming that what you did is the
+correct thing and therefore this will be
+very valid right however if your reward
+is low then um you are incorrect In
+assuming that what you did is the
+correct thing but since you multiply by
+a number that's low uh it will you know
+not be as impactful so specifically if
+we now talk about taking the gradient of
+this function this is no longer the the
+loss here but specifically if we're
+talking about taking the gradient of
+this function and then using this as our
+Delta it means the direction we move
+into will be according will be let's say
+your reward is high then it is this
+direction which assumes that our label
+was the correct one which means that in
+the future given the same observation
+we're going to repeat the action that's
+what it means if we do gradient descent
+on with that action being the correct
+label so in the future you'll do more of
+that and you multiply that by a big
+number so good if your reward is low
+then
+in you will do less more of that in the
+future okay so that's the trick
+multiplying it by the reward kind of
+modulates how that assumption is taken
+into account now usually you actually
+don't multiply by the reward but you
+multiply What's called the advantage a
+the advantage a is a normalized version
+of the reward and the advantage is
+usually just your reward minus some
+baseline and the
+Baseline we're going to get into that so
+theoretically the Baseline just has to
+be any function of the current
+observation as long as it doesn't depend
+on the action that's being done so the
+reward depends on the observation and
+the action obviously so you get an
+observation you act and then you get a
+reward as long as the Baseline only
+depends on the observation then you can
+actually use any Baseline function that
+you want to subtract here but what
+people usually do is they subtract
+What's called the value
+function so the value function is
+another function that you train on your
+trajectories that tries to
+estimate what's the average reward I'm
+going to get in this particular
+situation like what's what's the you
+know on average you know performing kind
+of the actions in the way that I perform
+them or performed them in the past what
+is it and what you can see right here is
+if you actually manage to do that then
+the advantage will be greater than zero
+if your reward was higher than average
+so more than you expected and the
+advantage will be less than zero if your
+reward was lower than average so if you
+did a thing and actually it goes well it
+goes better than average then a will be
+a positive number so you'll do more of
+that action in the future and if you do
+a thing given the observation that is
+leads to a reward that's less than
+expected the advantage will actually be
+less than zero and you'll you'll train
+not just to do less of you'll actually
+actively try to avoid that in the future
+right so it'll go into the opposite
+direction of this which assumes that you
+did the correct thing
+so you go in the opposite direction
+notice that this is still different from
+having a liable right the difference is
+so in in the in the situation where you
+did the right thing there's no
+difference right you assume it's the
+correct label it is actually the correct
+label good that's the same as a
+classification task but in the situation
+where you're incorrect In This
+reinforcement learning setting all you
+can do is avoid doing that action in the
+future right so Pac-Man you went right
+you got eaten don't do that anymore
+whereas in a in a classification task if
+you have a label and you went right your
+loss could tell you no you should have
+gone up right that's the difference so
+either just avoiding this versus
+actually knowing what the correct thing
+is as you can see if your action space
+becomes complex those two things are
+quite um um quite a difference but
+obviously once we once we get into the
+realm where we just don't have label
+training data anymore we have no choice
+but to do this okay all of this being
+said that usually we have some sort of
+um our policy times our advantage now
+what does trpo popo grpo what do they do
+trpo comes from from a trust region
+approach so a trust region approach is I
+am
+here my gradient tells me to go there
+but I don't trust my gradient too much
+it's dangerous to trust noisy stochastic
+gradient like you you you just have one
+mini batch of samples and you just
+evaluate it in the gradient it's just a
+linear approximation so should I really
+go very very far into that direction
+ction I don't think so so why don't I um
+make what you know what's called a a
+trust region approach now you can do
+hard trust region where it's just like
+you can go this far but no further but
+what's usually done is you usually say
+okay let's go your loss function is
+actually a function of your actual loss
+like be that classification or uh
+reward like the thing that we have down
+here or something like this um plus some
+KL
+Divergence between where you want to go
+right this here is
+um Pi hat that's like where you would
+like to go and this is pi where you are
+currently so between these
+two a KL Divergence it's a measure of
+um be careful that I don't upset the
+mathematicians it's a distance it's a
+pure valid distance function between
+this it's a thing and if these two
+distributions are more different the
+number grows let's just say like that so
+you can see that there is
+a there is a kind of a tug of war at
+play so the gradient descent wants very
+often the policy to move quite far in a
+particular step versus this KL
+Divergence penalty uh forces it to stay
+close to whatever reference policy you
+have trpo does this with um by Computing
+the natural gradient descent like doing
+a second order approximation adjusting
+to the curvature of the landscape and
+then doing a line search uh so you need
+to compute the hessan you need to do
+line searches and so on this is all very
+very cumbersome uses second derivatives
+very very bad if you're dealing with
+large models and therefore po was
+developed PPO is an approximation to
+that and that's the first Formula that
+we actually encounter here
+here
+encounter here okay so
+po uh is and you can see the formula is
+quite a beast um but we'll go we'll go
+through it
+in a sense you can see that the
+objective function has at its core
+again it it has at its core again the
+policy times the advantage hope you can
+see that so at its core it's the same
+thing as
+reinforce however it modulates that a
+bit it essentially says that um
+what what we care about is the
+likelihood ratio between uh pi and here
+Pi old now there's a bit of confusion
+sometimes with this kind of notation
+like what is pi old what what kind of
+old thing are you maintaining two
+different policies is there like an old
+model and a new model or something like
+this and that's not the case so this top
+thing that's the thing we're currently
+optimizing and
+this thing here is the thing that
+created the the current action and
+observation so only the bottom one is
+actually a real model that you have
+instantiated and that generated the data
+right that got this question and that
+produced these outputs and the top thing
+is the thing you're currently maximizing
+so you were here and that's what you
+generated your data and now you're kind
+of considering the whole Space here of
+of you know where should I go and
+wherever you consider that's the new
+thing right that's the thing that you're
+actively actively maximizing currently
+so you can also write this as um High
+Theta times a / Pi Theta old right this
+is the model you're optimizing and this
+is just a number this is just a number
+that says
+how well did you do currently and How
+likely is the thing you did under the
+old polic under under the policy that
+created it so the the idea being that
+you want to find something that did well
+right that gets a higher reward but also
+something that's quite likely from the
+place you know where you currently are
+what you you don't want is you don't
+want to find some kind of exploit in the
+environment some kind of Niche some kind
+of uh adversarial example almost you
+don't want to find that that just shoots
+up your reward like let's say you did
+something uh you sampled from your
+policy and you did something and uh it
+turned out well right and
+now you whoa if you didn't have this
+down here
+now if you if you were to just maximize
+this um policy with respect to Theta you
+would essentially look for the
+parameters to you essentially ask
+yourself what did I do to cause this
+good thing and let's do a lot more of
+that which sometimes is good but if you
+you know you if you have a long action
+sequence you've probably let's say
+you're a language model and you output a
+chain of mathematical thought and
+somewhere in between you use the word
+banana just by happen stance and you're
+like I use the word banana that that
+like let's do that a lot more even
+though that might not be responsible for
+this so
+conservatism is built into this
+algorithm right like in the trust region
+sense we are saying yes if something
+good happens please
+go into that into do more of whatever
+you did but whatever
+you you know end up doing must still be
+kind of likely under the policy that you
+know generated the
+data um so I hope that's kind of if you
+don't have that then it gets very
+unstable and then you you start your
+training procedure essentially starts
+just going after these kind of exploits
+um that just by Happ stands uh
+correlated for a little bit with high
+reward or low reward on the other hand
+so this is one conservatism is this
+ratio the second
+conservatism is you're actually taking a
+minimum of this quantity and this clip
+quantity right here which means that
+even this ratio you actually constrain
+to be in a region of 1us Epsilon to 1
+plus Epsilon so this ratio you you're
+not going to let go out of whack very um
+very high you constrain it as well and
+then you yeah you take the minimum of
+the Tomb so there are several layers of
+conservatism built directly into this
+objective function of Po and that
+conservatism combined with the fact that
+in their
+reward uh in their reward model that
+they use so their reward is actually
+modified
+they subtract this right here which is
+and this might be familiar to you this
+here is a KL penalty from a reference
+model sorry if this is confusing but
+there's another model coming so this
+model here what we call the reference
+model that's the model you started with
+so this reference model here would be
+the the model from SF F to tuning so
+you're you're um pre-training with code
+that will you know here is your
+initialization you're pre-training with
+code that will land you here uh in the
+weight space and then or in the policy
+space and then you're uh training
+pre-training further with this math
+Corpus that will end you here and then
+you do
+sft uh supervised finetuning that will
+end you here and here you're doing
+RL but you are
+by adding this right here you are
+actively pushing back towards that
+initial State you're assuming okay the
+thing I started with isn't actually so
+bad it's kind of reasonable please don't
+move away from that now you've already
+seen this in trpo the difference is here
+we're simply adding that penalty to the
+to the reward function um we're not
+going to compute any second derivatives
+or something like this we're essentially
+simply saying yeah even if your reward
+is good if it requires you to go away
+very far from where we started training
+it's actually actually you you you pay a
+penalty you don't get as much reward so
+that means the further away you go even
+if you collect super high reward from
+the environment it this it's just
+subtracted you just pay a attack
+essentially from going away so that's
+where they implement the KL penalty
+rather in the overall
+objective so in overview PPO looks like
+the thing on top right here
+schematically um you have a question
+your policy model like your llm produces
+an answer that goes through so your
+reward isn't directly used your reward
+actually goes through a reward model the
+reward model is simply a substitute for
+the environment that's trained on the en
+environment has some advantages to have
+a reward model um but essentially you
+can just think of that as a
+reward as said there is a reference
+model that estimates the likelihood of
+what you did and gives you a KL penalty
+if what you did Isn't So likely under
+the model you started training with that
+will give you your reward then there is
+a value model that also takes the
+observation and um sorry
+H the value model I'm not sure if it
+actually takes o or if it takes
+Q could just take Q
+maybe well in any case the value model
+uh gives you the value of the current
+situation which then allows you to
+compute the advantage and the
+advantage is what you use to train the
+policy model given this loss function we
+saw before so you can see this includes
+training this value model right here to
+do this Advantage estimation to variance
+reduce the reward for reinforce uh to
+then do the gradient descent here so you
+need the advantage now the bad thing is
+you need a value model and the value
+model is also some big language model
+that doesn't output text but outputs a
+number but still it needs to be a
+performant model that is able to ingest
+you know text from look at the
+environment look at the things and then
+be powerful enough to predict the
+average reward that you're going to get
+uh in a certain
+situation and that's not very good if
+you're dealing with llms because we
+already there are already billions of
+parameters and therefore um it's not so
+fun to maintain two of them at the same
+time so group reference policy
+optimization says what we can just just
+leave it away like just like we don't
+need it and then someone will say okay
+how then do you compute the advantage
+right how do you do what do you do
+instead of the value model and that's
+where grpo simply says well look we can
+use any Baseline we want so how about we
+do this instead of just getting one so Q
+instead of just getting one observation
+actually we get a ton of observations so
+01 O2 03 04 like we just kind of spray
+sample um and then we use the reward
+model to estimate the reward for each of
+them reward three reward
+four and then as our Baseline we can
+actually use the
+mean of all of these Rewards
+divided by the standard deviation of all
+of these rewards so in in essence we're
+just doing a a zcore normalization
+across that we're using the
+statistics of various outputs in order
+in a as as a baseline essentially it
+makes sense right it's okay what's what
+does the value model do the value model
+estimates what's kind of the average
+reward you're going to get in this
+situation
+well I have a language model so I can
+just sample a whole bunch of times
+according to the language model like
+according to my policy right sample a
+whole bunch of times and just look at
+what kind of rewards would I get by
+sampling a whole bunch of times and then
+use that as my Baseline so well clearly
+that thing is um my average reward so
+this it's not exactly the Baseline like
+we what we end up doing and you can see
+that um you can see see that here we end
+up actually
+doing yeah so you can see it's a bit
+different it's not minus the Baseline we
+end up doing the reward minus the mean
+divided by the standard deviation so
+we're zcore normalizing the reward and
+that is our
+advantage we can do that because we have
+reward model so we don't always have to
+submit to the environment um and we can
+do that because we have langu models
+which we can just roll out given a
+certain prompt we can just roll out at a
+certain temperature a number of times
+and therefore get that distribution and
+that means we don't need to have a value
+model so uh other than that pretty
+pretty similar they do one other
+difference is that they they return to
+adding the KL penalty directly to the
+objective function rather than
+penalizing the reward um it's a it's a
+choice and oh sorry yeah they
+approximate it using this formula right
+here since don't don't want to compute
+the Hessian and whatnot um they do an
+approximation like this so this is
+instead of adding it to the reward like
+Po does so that's a second slight
+difference rather other than just
+leaving away the value
+model cool that's it that's what they do
+that's how they get rid of the value
+model and by using the llm so in
+practice they're going to have not just
+one question but they're going to have
+question one question two question three
+question four and so on to each of them
+they are Computing a whole bunch of
+outputs like 011 012 013 and so on so
+and then they normalize with in those
+groups right um and that's why it's
+called group relative uh policy
+optimization because this is a
+group and this is a group and this is a
+group and this is a group so each
+question you roll out individually a
+bunch of times given the same starting
+point and that's what gives you your
+ultimate value as or your ultimate
+Advantage for that particular group and
+Advantage for that particular group and
+so on so you just stratify in a sense by
+sample yeah that's it um they go into
+how they also do process supervision
+which you can do when you have this kind
+of Chain of Thought uh things which is
+if you somehow manage to have a reward
+model that can give you even reward for
+intermediate uh results like you do
+Chain of Thought prompting so in math
+you have derivation steps if you can
+somehow train a reward model that can
+recognize oh yeah that's a correct
+derivation step you're on the correct
+path and can already give you a reward
+right that also pairs quite well with
+the grpo it probably pair quite well
+with any RL algorithm um but you can
+just do this thing by this intermediate
+um intermediate reasoning
+steps and yeah that's it so yeah don't
+want to go into the Super super details
+uh other than that but I I do think it's
+it's an interesting um it's an
+interesting
+paper one thing that I do want to and
+yeah you you see like above
+they using this
+grpo they uh then push their performance
+even further right and and that's how
+they get beyond all open source models
+and close to the commercial models now
+this is the last thing I want to
+highlight this section on why RL works
+so here they evaluate different things
+they evaluate specifically uh pass at K
+and mag at K mag at K is like majority
+voting so you what you do is you have a
+model you have a question and you output
+not just one output but you output a
+like an ordered set okay so you like
+give me your top 20 answers right so you
+get 01 that's your your best the answer
+that the model wants to give most and
+then you give the second most answer and
+the third most answer and so on and they
+they can they could all be correct right
+just different reformulations let's say
+of the same answer different or
+different derivations or same
+derivations stated in different ways or
+something like this but essentially what
+you're interested in is how many of the
+top K results are correct in itself
+that's the pass at K and if you had to
+you know vote if uh majority voting on
+the top
+K how often would you be correct then
+there's a slight difference right and
+that slight difference is actually made
+more drastic by reinforcement
+learning so they say here as shown in
+figure 7 reinforcement learning
+enhances Maj majority at k performance
+but not pass at K these findings
+indicate that reinforcement learning
+enhances the model's overall performance
+by rendering the output distribution
+more robust in other words it seems that
+the Improvement is attributed to
+boosting the correct response from Top K
+rather than the enhancement of
+fundamental capabilities this is
+something that we've come to learn in a
+lot of different ways from like
+reinforcement learning on language
+models or even supervised fine-tuning is
+that what's happening most likely is
+more that the capabilities of doing all
+of these things are already present in
+the underlying pre-trained language
+model and what these you know
+fine-tuning things do is just they kind
+of shape that output distribution so
+maybe the model has all kinds of ideas
+of what to say but you kind of
+suppress the uh paths that you don't
+like that are not according to your you
+know objective according to your sft
+distribution right if your sft
+distribution is this Chain of Thought
+stuff then you just kind of suppress all
+the output distribution that doesn't do
+that and you push the output
+distribution that does uh but
+notably that distribution is already
+there all that's needed is to kind of
+bring it up from the capabilities that
+the model already has and that in a
+sense is good and bad news the good news
+is that yeah it probably doesn't require
+that much data that much effort um or
+that much compute to to do these kind of
+things because all that's needed is sort
+of shaping a thing that's already there
+the bad thing is that given underlying
+models there is seems to be you know the
+the natural ceiling of how far we can
+push these models using reinforcement
+learning and self-tuning and so on is
+probably lower than many people expect
+right because what we're ultimately
+doing with RL and test time compute
+Investments and whatnot is just kind of
+bringing up what's already there in
+these models and yeah that will quickly
+reach its limit obviously reinforcement
+learning given enough time can solve any
+problem in the theoretical limit but uh
+that's not the real world and yeah I I
+think works like this show clearly that
+if we want
+AGI um we might not get it with staying
+at the current pre-trained models and
+just trying to tickle them in particular
+ways and Sample them in particular ways
+unless you think that some like AGI is
+already hidden inside of these models
+and we just have to bring it out that's
+of course possible but I I personally
+believe that that's not the case and we
+are still going to need to iterate on
+actually the base models to become a lot
+better rather than just doing a lot of
+test time compute which is very um very
+popular right now or you know
+fine-tuning or RL or something like this
+all right this video is already too long
+I thank you very much very much for
+listening and yeah join us on on
+Saturdays it's always fun see you around
+bye-bye

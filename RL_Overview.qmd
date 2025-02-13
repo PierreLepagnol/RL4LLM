@@ -1,0 +1,121 @@
+# **Reinforcement Learning Overview: Understanding the Methods**
+
+<!-- Welcome back! In this video lecture series on **Reinforcement Learning (RL),** we've covered the basics in the last three videos. We discussed **what reinforcement learning is, how it works, and some of its applications**—but we haven't yet explored the actual **algorithms** that make reinforcement learning work in practice. That's what we'll focus on now. -->
+
+## **A Structured Approach to Reinforcement Learning**
+Reinforcement learning is a vast and **multi-disciplinary field** that has been developing for nearly a century. It merges concepts from:
+- **Neuroscience** (e.g., Pavlov's experiments on conditioned behavior),
+- **Behavioral science,**
+- **Optimization theory,**
+- **Control theory,** particularly **Bellman's equation** and the **Hamilton-Jacobi-Bellman (HJB) equation,**
+- And modern **deep reinforcement learning,** where powerful machine learning techniques are used to solve optimization problems.
+
+My perspective on reinforcement learning is that it sits **at the intersection of machine learning and control theory.** We are essentially using machine learning to **develop effective control strategies** that help an agent interact with an environment.
+
+In this lecture, my goal is to **organize the different approaches** in reinforcement learning. I hope this structured view will be helpful for many of you.
+
+### **Reference to the New Book Chapter**
+This topic is actually a **new chapter in the second edition of my book** *Data-Driven Science and Engineering*, co-authored with **Nathan Kutz.** Reinforcement learning is one of the new topics we added. Writing this chapter gave me a great opportunity to dive deeper into RL, and it's also a chance to share more details with you.
+
+If you're interested, you can **download the chapter** (I'll put the link in the comments). I'll also share a link to the second edition of the book once it's available. Each video in this series will follow along with the material from this chapter.
+
+---
+
+## **Quick Recap: What is Reinforcement Learning?**
+
+Before diving into the structure of RL methods, let's **quickly review** the core idea.
+
+In reinforcement learning, we have an **agent** that interacts with the **environment** by taking **actions.** The actions can be:
+- **Discrete:** Example—playing chess, where each move is a specific action.
+- **Continuous:** Example—controlling a robot, where actions involve continuous adjustments.
+
+At each time step, the agent **observes the current state** of the environment and uses this information to decide on its next action. The goal is to **maximize future rewards.**
+
+### **Challenges in Reinforcement Learning**
+One of the biggest challenges in reinforcement learning is that **rewards can be delayed.** For example, in chess, you may not know if a move is good or bad until the game ends. The same applies to games like tic-tac-toe, backgammon, and Go. This **sparse reward structure** makes learning difficult because the agent doesn't always get immediate feedback.
+
+This challenge is similar to how **animals and humans learn behaviors**. If you're training a dog to do a trick, you often need to **break the learning process into smaller steps** and provide **intermediate rewards** so the dog understands what to do.
+
+### **Key Concepts in Reinforcement Learning**
+Two essential components in RL are:
+
+1. **Policy (π):**
+   - A **strategy or set of rules** that the agent follows to decide which action to take in a given state.
+   - Can be **deterministic** (always chooses the best action) or **probabilistic** (chooses actions based on probabilities).
+   - Written as **π(a|s)**, meaning the probability of taking action **a** in state **s**.
+
+2. **Value Function (V):**
+   - Measures how **good** it is to be in a particular state.
+   - It's the **expected sum of future rewards**, often with a **discount factor** that gives more weight to immediate rewards.
+
+For small problems like **tic-tac-toe,** we can compute value functions through brute force by considering all possible game states. But for **complex games like chess or Go,** the number of possible states is astronomically large (possibly **10⁸⁰ or more!**). Because of this, we need **smarter ways to estimate value functions and policies.**
+
+The goal of RL is to **learn the optimal policy** that maximizes future rewards through **trial and error**. This is a difficult problem, which is why RL has been evolving for nearly a century and continues to grow, especially with the rise of deep learning.
+
+---
+
+## **Organizing Reinforcement Learning Methods**
+Now that we've established the basics, let's **categorize the main approaches** in reinforcement learning.
+
+### **1. Model-Based vs. Model-Free RL**
+The first major division in RL methods is whether the agent has a **model** of the environment:
+
+- **Model-Based RL:** The agent has a **known model** of how the environment behaves.
+- **Model-Free RL:** The agent **doesn't have a model** and must learn through experience.
+
+#### **Model-Based RL**
+If we have a well-defined **Markov Decision Process (MDP)** (i.e., we know the probabilities of moving from one state to another given an action), we can use **dynamic programming techniques** like:
+- **Policy Iteration**
+- **Value Iteration**
+
+These techniques rely on **Bellman's Optimality Principle** to iteratively refine the policy and value functions.
+
+For **continuous control problems** (e.g., self-driving cars or robotic systems), we use **optimal control methods** like:
+- **Linear Quadratic Regulators (LQR)**
+- **Hamilton-Jacobi-Bellman (HJB) equations**
+
+These approaches are mathematically elegant but are often computationally expensive for large-scale problems.
+
+#### **Model-Free RL**
+Most real-world applications don't have a perfect model of the environment. For example, in **chess,** we can't fully model the opponent's behavior. This is where **model-free RL** comes in.
+
+Model-free RL can be divided into:
+- **Gradient-Free Methods:** No gradient information is needed.
+- **Gradient-Based Methods:** The agent can compute gradients to optimize the policy.
+
+### **2. On-Policy vs. Off-Policy Learning**
+Within model-free RL, there's another important distinction:
+
+- **On-Policy Learning:** The agent **follows its current best policy** while learning.
+  - Example: **SARSA** (State-Action-Reward-State-Action)
+
+- **Off-Policy Learning:** The agent learns from **other policies**, including random or past experiences.
+  - Example: **Q-Learning** (a widely used algorithm in RL).
+
+Off-policy learning is useful for scenarios like **imitation learning,** where the agent learns by **watching expert demonstrations.**
+
+---
+
+## **Deep Reinforcement Learning: The Modern Breakthrough**
+Over the last decade, **deep reinforcement learning (Deep RL)** has revolutionized the field. Companies like **DeepMind** have demonstrated that RL can:
+- Play Atari games at **human-level performance**.
+- Beat world champions in **Go and Chess**.
+- Solve complex real-world control problems.
+
+Deep RL combines traditional RL techniques with **deep neural networks** to approximate policies, value functions, and Q-functions. Some key methods include:
+- **Deep Q-Networks (DQN)**
+- **Policy Gradient Methods**
+- **Actor-Critic Methods**
+- **Deep Model Predictive Control (Deep MPC)**
+
+These deep learning-based approaches have significantly expanded the capabilities of reinforcement learning.
+
+---
+
+## **Conclusion & Next Steps**
+This lecture provided a **broad overview** of reinforcement learning and how different methods are categorized. In the upcoming lectures, we will **dive deeper** into:
+- **Markov Decision Processes** and **Dynamic Programming**
+- **Q-Learning and Temporal Difference Learning**
+- **Deep Reinforcement Learning Techniques**
+
+This structured approach will help you build a **solid understanding** of reinforcement learning. Stay tuned, and I look forward to exploring these topics with you!

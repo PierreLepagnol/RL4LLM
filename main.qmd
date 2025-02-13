@@ -1,0 +1,88 @@
+---
+title: "LLM Training & Reinforcement Learning. "
+# author: "Your Name"
+date: "2025-02-14"
+---
+
+# Qu'est-ce le Reinforcement Learning ?
+
+## Définitions & Basics
+
+![](figures/RL_process.png)
+
+Un **agent** qui interagit avec l'**environnement** en prenant des **actions** de manière à maximiser la fonction de **valeur** (sommes des récompenses).
+
+L'objectif du RL: apprendre la **politique optimale** qui maximise les récompenses futures par **essais et erreurs**.
+
+<!-- C'est un problème difficile, c'est pourquoi le RL évolue depuis près d'un siècle et continue de croître, en particulier avec l'essor de l'apprentissage profond. -->
+
+## Composants essentiels du RL: Actions
+
+![](figures/RL_process.png)
+
+- **Discrètes** : Exemple - LLM, où chaque token est une action est une action spécifique.
+- **Continues** : Exemple - contrôler un robot, où bouger le bras méchanique est une action continue.
+
+## Politique ($\pi$) & Fonction de valeur ($V$)
+
+
+### Politique
+
+- **Stratégie** (ensemble de règles) que l'agent suit pour décider quelle action entreprendre dans un état donné:
+    Exemple : Réseau de neurones, une liste de If-then-Else, etc
+- Peut être **déterministe** ou **probabiliste**.
+<!-- (choisit toujours la meilleure action)  (choisit les actions en fonction des probabilités). -->
+- Formalisme : $\pi(a|s)$, ce qui signifie la probabilité de prendre l'action **a** dans l'état **s**.
+
+
+### Fonction de valeur ($V$)
+
+- Souvent la somme des **Somme des récompenses futures**
+- Mesure à quel point il est **bon** d'être dans un état particulier.
+
+Rappel Objectif: apprendre la **politique optimale** qui maximise les récompenses futures par **essais et erreurs**.
+
+<!-- À chaque étape, l'agent **observe l'état actuel** de l'environnement (prompt) et utilise cette information pour décider de sa prochaine action.
+Le but de l'agent: **maximiser une récompense**. -->
+
+<!-- , souvent avec un **facteur d'escompte** qui donne plus de poids aux récompenses immédiates. -->
+
+
+<!-- Pour les petits problèmes comme le **tic-tac-toe,** nous pouvons calculer les fonctions de valeur par force brute en considérant tous les états de jeu possibles. Mais pour les **jeux complexes comme les échecs ou le Go,** le nombre d'états possibles est astronomiquement grand (peut-être **10⁸⁰ ou plus !**). Pour cette raison, nous avons besoin de **moyens plus intelligents pour estimer les fonctions de valeur et les politiques.** -->
+
+## Differents algorithmes de RL
+
+![](figures/databookRL_light.jpg)
+
+- Policy Gradient Optimization : TRPO, PPO, GRPO
+
+<!-- Les méthodes basées sur la politique sont une autre méthode fondamentale de RL qui met davantage l'accent sur l'optimisation directe de la politique dans le processus de choix des actions d'un agent.
+Contrairement aux méthodes basées sur la valeur, qui recherchent la fonction de valeur implicite dans la tâche, puis en déduisent une politique optimale, les méthodes basées sur la politique paramétrisent et optimisent directement la politique.
+Cette approche offre plusieurs avantages, notamment une meilleure gestion des environnements très difficiles qui ont des espaces d'action de haute dimension ou où les politiques sont intrinsèquement stochastiques. -->
+
+# Application du RL au LLMs
+
+##
+
+- TRPO, PPO, GRPO
+
+ Trust Region Policy Optimization
+- Trust Region Policy Optimization
+
+GRPO (Group Relative Policy Optimization) is a method used in reinforcement learning (RL) to help a model learn better by comparing different actions and making small, controlled updates using a group of observations
+
+## Exemple de Deepseek-R1
+
+![TrainingPipeline de DeepSeek R1](figures/DeepSeek_TrainingPipeline_RL.jpeg){height="80%"}
+
+## RL during Post-Training
+
+Alternative au RL (DPO)
+
+## RL during Pre-Training
+
+- GRPO is an improved version of Proximal Policy Optimization (PPO).
+
+![Comparaison PPO & GRPO issue de DeepSeekMath](figures/GRPO.pdf){width="90%"}
+
+

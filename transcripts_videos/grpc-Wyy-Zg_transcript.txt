@@ -1,0 +1,608 @@
+Transcript for video ID: grpc-Wyy-Zg
+[Applause]
+okay this is a hopefully fun talk but
+also a bit of a work in progress as it's
+a different audience than I'm used to so
+at least a mix of some people I'm used
+to but in much more uh density so I'm
+trying to explain how to approach post
+training for AI applications and the
+first slide is a PSA that model training
+is extremely hard and very expensive and
+you probably don't want to be doing it
+so this is kind of a self-indulgent talk
+so you could get hooked and be stuck
+doing it and spend a lot of money it is
+very cool but I added this at the bottom
+is like being very good at using models
+for your application and knowing what is
+out there is probably going to deliver
+more value especially as this changes
+very quickly um but if you want to do
+this you really need to think about two
+things it's just like what can you
+actually change with the models and what
+tasks do you care about and then there's
+going to be a small overlap there and
+that's where you're going to spend all
+of your time and most of what I do is
+focusing on methods and releasing tools
+in the open which are multiple Cycles
+before they will reach many applications
+so someone will take a model and then
+app add more data to it to actually
+reach an application but a lot of these
+things are just fundamentals of how
+models are being trained
+today so where post training starts is
+you take some raw based language model
+based language models are very fun to
+play with mostly because they are very
+weird and what we do is we take this raw
+model trained on the the internet and we
+come up with the set of tasks we care
+about we think about human preferences
+we have set of core skills and this is
+where instruction following actually
+comes in
+um and initially approaches to post
+training looked were things like
+instruct GPT learning to summarize from
+Human feedback um original Claud
+original chat GPT were trained with
+methods like this where you take this
+base model you do supervised F tuning
+also called instruction tuning on a
+bunch of human data then you train a
+reward model and you do some fancy RL or
+other optimization you get a final model
+out suspect I've already lost some
+people but this is roughly what you're
+in for and I don't go into all the math
+of all these things but mostly like
+instruction tuning is the same loss
+function used to train language models
+with very specific data sets with our
+prompt completion like um tell me about
+the Roman Empire very um benign things
+like this and then you collect human
+preferences which are comparing to
+responses to a piece of
+text this is largely doable today if you
+want to approach it I think it doesn't
+address a lot of the things in this room
+or a lot of things that people in this
+room should care about it was mostly
+focused on improving alignment to like
+AB testing in chat testing and targeting
+specific capabilities has become more of
+an interest in language models as we
+need to figure out what to use them for
+so today this looks a lot more
+complicated you don't need to know all
+the details I can point you to the
+tutorial I gave this morning if you want
+to know more about this but if you look
+at the papers like uh meta llama and
+things like this the few glimpses kind
+of behind the mirror that we get there's
+a ton going on that they use to train
+these instruction
+models and really you can put a ballpark
+on the price that meta pays to do this
+full post training on many tasks and
+many skills to be over $10 million and
+could even approach $100 million for
+these really large projects that they
+have planned so we did this at ai2 it
+was like a team of 20 people order of
+magnitude less spend especially when you
+um remove some data costs but it is a
+very big thing and it is a a lot of
+moving Parts on these
+systems so kind of go back to here I'm
+just going to use this as a transition
+diagram if we look at the model that you
+get out this is where I think most
+people should actually start you should
+largely ignore the base models that are
+there because doing this preference
+alignment to human data is going to be a
+lot of money and work this is where most
+of the data budget goes it's for these
+par wise comparisons but there's kind of
+a really small niche of research where
+they're fine-tuning from these instruct
+models so they take the model that meta
+released and they're doing various
+things to elicit very specific behavior
+so there's a lot of different things
+that you can do and the list is growing
+we've heard about prompt engineering you
+could just do instruction tuning on top
+of these models open AI released RL fine
+tuning which is something that I've been
+working on related stuff so that's
+interesting to me and there's this whole
+question of like inference scaling what
+does this mean so really you can think
+about post training for applications is
+taking a good strong model that's really
+good in general so you don't have to
+worry about like is it good at chat you
+just want to make it better on math or
+what the equivalent task to your domain
+is some of the examples that you can
+find this is mostly because I'll share
+the slides and you can go click around
+and see things that I find cool in the
+space there's a a group that works at a
+startup that um used to be the Grandad
+students us be at Berkeley they release
+these Athen models which is exactly this
+they take llamas based checkpoints that
+are instruction tuned already they come
+up with some tasks that they care about
+and they show that they can do much
+better on these by continuing to find
+tune on what meta built rather than
+redoing the whole stack these tend to be
+much more data efficient um oh there's
+another one I want to mention later but
+you can see these Trends again and again
+um there was a academic work that took
+Google's instruction tuned open weights
+models and applied more preference
+tuning on it just to 2,000 examples and
+did much better on chat but Arena this
+evaluation that everyone talks about
+right now um there's another one Nvidia
+did this they took their like 20,000
+data point help I think I'm going to
+mess it up this been a long day but I
+think it was like their help steer data
+set or something we can find it and also
+like outperformed meta's model on chatot
+Arena chatot arena is probably not what
+you care about but it goes to show that
+you can kind of do this multiple times
+and I think that you're not going to get
+that much help from Academia in the near
+term for whatever reason this isn't
+really like it's not considered an
+Apples to Apples comparison if you're
+doing a research paper on post
+training on the other side there are
+products for fine tuning I don't know a
+lot about them I I should talk to more
+people that are using these but largely
+if you use the open AI fine-tuning API
+it's doing something like a Lura a
+parameter efficient fine tuning in the
+background and they are also fine tuning
+from instruct models so it's good to
+like take inspiration from what these
+closed companies are doing because they
+probably know what they're doing for
+some things and don't try to reinvent
+the wheel of redoing the whole research
+pipeline when you're training these
+models so if we go back to this I'm
+going to kind of just go through some
+high level decisions that I would make
+if someone were to say I want to do X
+like how should I approach it and it's
+kind of a list of things that are the
+decisions to start with and then you
+have to figure out all the details from
+there so the most important thing is
+always data in a vals the question is
+how much data do you actually need in my
+team we would say that you probably need
+about a thousand instruction tuning
+samples if you're going to use the
+supervis loss to see Behavior change I
+liked how open AI described it in their
+RL fine tuning live stream where they
+say that this type of instruction tuning
+on top of an strong chat model is
+increasing the um like the prevalence of
+features so instruction tuning isn't
+guaranteed that the questions you put in
+will be right but it's going to increase
+the behaviors that you want to see
+that's still useful especially you want
+your model to have a specific like um
+feel for your your application but RL
+finetuning is very is opening a whole
+new door which I find very exciting
+where like open AI says you need about
+10 training examples um the big thing to
+think about this is that RL finetuning
+is going over the same data again and
+again until the model training actually
+gets better answers I think it's we work
+on code math and precise instruction
+following in our first research project
+that was really similar to this precise
+instruction following is like um if I
+ask you to write a letter you can
+specify that every sentence that's a
+start with the letter A these are
+verifiable things you can write reject
+statements and code to actually
+summarize these and this is very similar
+to what opening eye is doing and I think
+a lot of applications will apply to this
+where you have verifiable outcomes that
+you want they're pretty simple but we
+haven't known how to train models to do
+it and if it is more data efficient
+that's even better
+um if you do full post training kind of
+repeating this theme of you might not
+want to do this you probably to are
+going to use millions of data points at
+um each stage of the post trainining
+Pipeline and that's why it's just like
+try starting with instruct let me know
+how it goes you you don't want to be
+doing this it took us like multiple
+months with 20 people
+full-time um there's also the question
+of now that there are a ton of
+preference tuning methods which one
+should you use I've been talking a lot
+about instruction tuning in RL there's a
+lot more words you can go into this and
+this is generally how I view them I
+think that the top and the bottom are
+going to become increasingly popular as
+you think about fine-tuning as starting
+from an instruct model because this
+preference tuning is most useful for
+kind of just really getting strong style
+and making the models really reliable
+and getting the outputs to be something
+that people like I think what people
+like is not going to be what shifts the
+needle in most really specific domains
+that you're building from instruction
+tuning will get you started and if this
+RL tuning becomes a real deal it is
+going to be very powerful because it's
+just like the domain space is very
+big so a lot more here I think you may
+have heard about this like direct
+preference optimization algorithm and if
+you should use DPO or po or all the
+million other papers that have come out
+in the space it really made great memes
+for people that are nerds about post
+training
+largely this is from last year and all
+the things that I've linked here are
+from last fall the situation hasn't
+changed a ton if you want to do
+preference tuning this DPO direct
+preference optimization is just so much
+easier to implement that it's where you
+want to start but if you're getting into
+this picture you're probably in um too
+deep because it's not going to be more
+than like a 1% difference on any
+performance and it'll be a whole
+headache a more interesting question is
+there are specific um algorithms that
+have been designed that can use
+different types of data the standard
+preference tuning is a Chosen and
+rejected pairwise sample but this kto
+algorithm essentially takes data that is
+like a thumbs up so if you have a chat
+endpoint where a user can say that
+response was good this preference tuning
+algorithm is designed to use this type
+of data and I've heard from people that
+have switched from trying to do DPO or
+these kind of more complicated setups
+where they had to come up with a data
+rule to create new data and they're like
+this suits my endpoint better and what
+you the users are actually seeing and it
+actually worked so um I would say keep
+an eye on the space and just kind of
+don't don't try to force things and see
+if there are people coming up with new
+things that are better suited to your
+application if you are actually um doing
+this the one of the biggest questions is
+which model do you start from uh while
+you'll see companies say that they're
+model is the best and the academic
+evaluations are very obvious that like
+llama
+3.3 the newest model looks great it
+beats everything when your domain is not
+something that these academic benchmarks
+are doing you'll have way higher
+variance in performance something that
+we do at AI to is we have both um like
+development and unseen evaluations where
+when we're training the model we're
+trying to get the best scores on these
+development sets that you can but we
+have unseen evalu valuations that are
+similar to kind of test the
+generalization of the models and it's
+really hard to get the models to
+generalize in this way it's very much of
+like you get data for a specific thing
+you make the model better at it and you
+kind of repeat this process but all
+these kind of longtail tasks and
+building your own evaluations is not
+going to be in the train core training
+regime for most of these models that
+you're going to try so it's very
+important to just like try a bunch of
+them even worse models may do better
+when they're worse on standard bench
+marks this is on performance if you're
+doing open source infrastructure there's
+also variance on um just raw like
+performance or like computational
+efficiency bugginess Etc I think so my
+friends in the back were trying to
+use um I think a fi model three billion
+parameters for some data processing and
+it turned out that its VM implementation
+was slower than the quen 7B model and
+it's like okay like you should just just
+try things and don't assume that
+everything works exactly as it should
+and there's a lot of variation
+here prompting again is one of the
+things that is kind of not necessarily
+neglected but the academic Community
+doesn't welcome it as much even though
+it is extremely powerful in changing the
+behaviors of the models and it's very
+cheap I would say that you should start
+with this even though I don't have
+General recommendations for how to do it
+I'm guessing being very detailed helps
+and then build evaluations where you can
+test it it's generally you want to start
+with the things that are easiest and
+build from
+there another question that is fun to
+get because this new is how can I use
+inference scaling laws the one thing
+that you need to think about when you're
+seeing these plots in any inference time
+compute is that a lot of it is not going
+to make the model solve tasks that
+couldn't do it all so if your model gets
+0% on a task spending more on inference
+is not going to help it but if it gets a
+few if it gets a low probability correct
+answer what is essentially happening is
+that a lot of these inference methods
+are making it so you can do like a more
+robust search so if you do 10 times the
+compute you can get the one correct
+answer the answer out that would have
+been correct that that one time
+and there are going to be more
+improvements here where that actual
+underlying abilities improve but you can
+kind of a lot of the research is built
+on this idea of just sampling more I
+think this plot is from a paper that I
+think argues that uh most of these
+papers are going the wrong Direction and
+just running more samples from the same
+model is what you need to do so a lot of
+it is going to you're going to hear a
+lot of hype about this but your model
+needs to be able to correct answers
+correctly for some of the models in
+order to improve and that's going to be
+the same for the open AI um RL API if
+you're if their models can't do it at
+all they're not going to get any
+learning signal to improve so it's just
+not going to do
+anything that's where I'm going to
+switch on to my opinions on this which I
+find exciting and just kind of we'll see
+a few months how this ages when the
+public version comes out is like still a
+beta program but I think this could be a
+big deal for how fine tuning and just
+applications could be approached if you
+don't know essentially what they said is
+that you can update upload data where
+you have a question and an answer the
+answer needs to be able to be something
+that can be verified as right and they
+provide graders and what they're doing
+is they're running reinforcement
+learning behind the scenes to prompt
+their models to complete a bunch of
+times and they check the completions
+versus your answer and then if the
+answer is right it rewards the model and
+changes the parameters in order to
+actually do this more often and they do
+multiple passes over the data to
+actually make the model change its
+Behavior so if we went back to the
+instruction tuning example in the
+beginning it's talking about changing
+the features that occur in the model
+where this could really change how it
+gets to a solution and I've seen this in
+training models and it does seem like a
+big open door for post training at a
+raow of research level and then we'll
+see how long it takes to trickle down
+into
+applications so this is the data format
+that they use that I was mentioning this
+is from the blog post they um they show
+this probably more complicated than it
+needs to be example from biology where
+the correct answer is I think I don't
+even I don't even know what this is it's
+some Gene sequence the most the simplest
+examples are math it's like you could
+ask a grade school math problem which is
+like Bob has six apples he gives four to
+Mary who gives two of hers to someone
+else like how many apples does Mary have
+like that's a much more logical way to
+see this is with math because we can
+kind of Reason through it ourselves and
+see if the model is improving but
+opening I gave a complicated example
+which we'll see to the extent that hard
+things
+work um we have some data on hugging
+face that looks like this as well which
+is essentially um a prompt a ground
+truth answer and we just have a bunch of
+them that's how we train some of our
+models at ai2 to get better at
+instruction following in math so it it's
+fun that there are some open examples
+that you can look at and not do all of
+just like trust us like they do
+sometimes and then what happens is
+opening eye made a big deal about their
+graders which are language models for
+extracting answers here's an example on
+the right is like if you're doing a math
+problem you can express a math answer in
+a lot of different ways in text and
+largely when you open this up to many
+more domains you're going to need some
+level of intelligence to reliably get
+these answers out and they're opening
+this up to anyone which is why they have
+this whole what will be graders
+documentation in different ways of
+extracting answers and different ways of
+scoring answers but in reality it's just
+you can think of it as a box that's like
+yes or no is this
+right they have all this fancy UI which
+is tracking runs
+um like what the actual performance is
+on your task so top at um one or top at
+five means like what is the score if you
+sample one time from the model or five
+times from the model and we'll see how
+they put this together I
+think ux for training is something that
+I haven't thought about as much it's
+mostly for to Consumers but I hope that
+this is easy to use here's more stuff I
+don't need to do free PR from them this
+is what the learning curve will look
+like I'm going to switch to ones that we
+have just to give this as a primer you
+train longer on the x-axis and your
+numbers go up for your training data
+it's this is what you want to see we did
+this for multiple evaluations at ai2
+with our open source code and we did GSM
+AK is a popular easier math aval math is
+a harder AAL um if AAL is the
+instruction following that I was
+describing and what we do is we have
+separate training data from the
+evaluation so the test set is this First
+Column is the actual evaluation
+performance so that going up is
+generalization and the second column is
+the um training data and the third and
+fourth are just um RL internals internal
+data to training so you can see that all
+of these the training set gets better
+and only some of them have clear
+generalization I think when you do this
+in your case you want to have your train
+data really closely match the vals we
+were targeting specific skills that were
+trying to map from different types of
+data but the real thing is like to some
+extent these behaviors already exist
+in kind of what open AI was showing and
+the feedback loop to do this looks
+something like um rlf it's really a
+standard RL Loop but you do this on top
+of a language model um if you look at
+more literature on reinforcement
+learning which is like trial and error
+learning you'll see a lot of things like
+this so you can try it here or reach out
+if you have questions for code if you
+want to plug this into something we'd be
+interested to see what you get
+one of the fun things is while o1 models
+are new I don't really use them for
+anything other than like a Hail Mary unw
+writing code if open aai does aggregate
+data from people using the fine-tuning
+service it could make it so these
+generalized reasoning reasoning models
+are much more useful in a lot of domains
+which could build a lot of value so it's
+one of those weight and se's but I see
+why they want to do this they want to
+get more data to kind of expand the
+scope of 01 models to more tasks for
+more users rather than what is now just
+like a reason in code toy if they really
+get more domains it could be very
+important to
+them so some concluding advice to repeat
+things I said data is the most important
+thing look at your data everyone says
+this this wasn't really a data talk but
+if I don't put it in I am making a
+mistake you need your own evaluations
+this is kind of covering your bases
+don't trust academic avals you need to
+build your own avows especially when
+um new training regimes are um requiring
+it so if RL tuning requires a vals
+you're going to need to build them to
+actually do the training which is
+probably helping people along the
+way you should start from fine-tuning
+from instruct models base models are
+going to be more work than it is worth
+and we've seen a lot of cases where this
+can work really
+well I've just talked about our Aline
+tuning so it'll open up a lot of domains
+where this actually matters but most
+people I think will start with
+supervised tuning or instruction tuning
+because it is what we know a lot of
+infrastructure is designed for it and so
+on okay the kind of a summary um to
+repeat myself the last time preference
+tting is probably not worth it human
+data is hard to collect and there's a
+lot of noise not a ton of literature on
+how to do it so I'll leave this up for a
+second and then kind of say thanks to a
+lot of people that contribute to post
+training and other efforts at AI to and
+hopefully this was interesting and saved
+to a potential rabbit hole that you
+didn't need to go down awesome
