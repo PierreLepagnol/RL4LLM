@@ -8,7 +8,7 @@ date: "2025-02-14"
 
 ## InstructGPT - ChatGPT
 
-![](figures/InstructGPT.png){wdith=35%}
+![](figures/InstructGPT.png){width="80%" fig-align="center"}
 
 - Papier de recherche : 4 Mars 2022
 - ChatGPT : 30 Novembre 2022
@@ -205,13 +205,13 @@ En résumé, la fonction de valeur dans RLHF aide le modèle à évaluer la qual
 
 ::: {.callout-note title="Key Takeways"}
 - Approche RL alternative à PPO
-- Pas de Reward Model:
-    - Récompenses de précision : Vérification si la réponse finale du modèle est correcte (pour les maths, le code, la logique)
-    - Récompenses de format : Encouragement d'une chaîne de pensée structurée, par ex. avec des balises `<think> ... </think>`
-- Pas de Value Model $=$ gain de mémoire.
+- Pas de Reward Model $\rightarrow$ Vérification fiable basée sur des règles.
+    <!-- - Récompenses de précision : Vérification si la réponse finale du modèle est correcte (pour les maths, le code, la logique)
+    - Récompenses de format : Encouragement d'une chaîne de pensée structurée, par ex. avec des balises `<think> ... </think>` -->
+- Pas de Value Model $\rightarrow$ Group-based Comparison. (gain de mémoire)
 :::
 
-![](figures/DeepSeekMAth.png){width="80%" fig-align="center"}
+![](figures/DeepSeekMAth.png){width="60%" fig-align="center"}
 
 <!-- \begin{align*}
 & \mathcal{J}_{GRPO}(\theta) = \mathbb{E}{[q \sim P(Q), \{o_i\}_{i=1}^G \sim \pi_{\theta_{old}}(O|q)]} \\
@@ -227,7 +227,7 @@ En résumé, la fonction de valeur dans RLHF aide le modèle à évaluer la qual
 - Récompenses de précision (Accuracy rewards)
 - Récompense de format.
 
-Pas de *neural reward model* car il pourrait souffir de *reward hacking*.
+> Pas de *neural reward model* car il pourrait souffir de *reward hacking*.
 
 <!-- GRPO (Group Relative Policy Optimization) is a method used in reinforcement learning (RL) to help a model learn better by comparing different actions and making small, controlled updates using a group of observations
 
@@ -242,3 +242,10 @@ It provides a baseline estimate of the future rewards -->
 - [The 37 Implementation Details of Proximal Policy Optimization](https://iclr-blog-track.github.io/2022/03/25/ppo-implementation-details/)
 - [Video Yannick Kilcher : GRPO Explained](https://www.youtube.com/watch?v=bAWV_yrqx4w)
 - [Blog Hugging Face sur le RLHF](https://huggingface.co/blog/rlhf)
+
+- [Blog: DeepSeek's Lies: A Closer Look at GRPO Implementation](https://medium.com/intelligence-factory/deepseeks-lies-a-closer-look-at-grpo-implementation-dea4607842e9)
+
+
+## Illustration Supplémentaire RLHF
+
+![Illustration du RLHF - Blog  HuggingFace ](figures/rlhf_hugginface.png){width="80%"}
